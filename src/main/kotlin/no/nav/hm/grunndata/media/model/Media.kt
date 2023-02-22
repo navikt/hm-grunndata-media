@@ -9,11 +9,11 @@ import java.util.*
 
 @MappedEntity("media_v1")
 data class Media (
-    @Id
+    @field:Id
     val uri: String,
     val origUri: String,
     val oid:    UUID,
-    val order:  Int=1,
+    val priority:  Int=1,
     val type: MediaType = MediaType.IMAGE,
     val text:   String?=null,
     val status: MediaStatus = MediaStatus.ACTIVE,

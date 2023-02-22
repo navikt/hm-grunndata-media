@@ -2,6 +2,10 @@ micronaut:
   application:
     name: hm-grunndata-media
     thread-selection: auto
+  executors:
+    consumer:
+      type: fixed
+      nThreads: 1
   metrics:
     enabled: true
     binders:
@@ -33,3 +37,16 @@ jackson:
   bean-introspection-module: true
   serialization:
     indentOutput: true
+datasources:
+  default:
+    url: ${DB_JDBC_URL:`jdbc:tc:postgresql:14:///gdb?TC_INITSCRIPT=file:src/test/resources/postgres/postgres-init.sql`}
+    driverClassName: ${DB_DRIVER:org.testcontainers.jdbc.ContainerDatabaseDriver}
+    username: ${DB_USERNAME:media}
+    password: ${DB_PASSWORD:media}
+    maximum-pool-size: 8
+    minimum-idle: 0
+    pool-name: default
+flyway:
+  datasources:
+    default:
+      locations: classpath:db
