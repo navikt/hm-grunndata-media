@@ -62,13 +62,13 @@ dependencies {
     implementation("io.micronaut.micrometer:micronaut-micrometer-core")
     implementation("io.micronaut.micrometer:micronaut-micrometer-registry-prometheus")
     implementation("io.micronaut:micronaut-management")
+    implementation("io.micronaut.objectstorage:micronaut-object-storage-gcp")
     testImplementation("io.mockk:mockk:$mockkVersion")
     testImplementation("io.micronaut.test:micronaut-test-kotest5")
     testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-core-jvm:$kotestVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.0")
     testImplementation("org.testcontainers:postgresql:${tcVersion}")
-
     // Rapids and Rivers
     implementation("com.github.navikt:hm-rapids-and-rivers-v2-core:$rapidsRiversVersion")
     implementation("com.github.navikt:hm-rapids-and-rivers-v2-micronaut:$rapidsRiversVersion")
