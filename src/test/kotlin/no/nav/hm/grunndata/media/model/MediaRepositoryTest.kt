@@ -13,8 +13,7 @@ class MediaRepositoryTest(private val mediaRepository: MediaRepository) {
     @Test
     fun crudMediaRepositoryTest() {
         val uri = UUID.randomUUID().toString()
-        val media = Media(uri = uri ,
-            origUri = UUID.randomUUID().toString(), oid = UUID.randomUUID(), text = "en tekst")
+        val media = Media(uri = uri, oid = UUID.randomUUID(), text = "en tekst")
         runBlocking {
             val saved = mediaRepository.save(media)
             saved.shouldNotBeNull()

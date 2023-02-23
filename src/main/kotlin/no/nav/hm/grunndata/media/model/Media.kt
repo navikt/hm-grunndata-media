@@ -2,8 +2,10 @@ package no.nav.hm.grunndata.media.model
 
 import io.micronaut.data.annotation.Id
 import io.micronaut.data.annotation.MappedEntity
-import no.nav.hm.grunndata.dto.MediaSourceType
-import no.nav.hm.grunndata.dto.MediaType
+import no.nav.hm.grunndata.rapid.dto.MediaDTO
+import no.nav.hm.grunndata.rapid.dto.MediaSourceType
+import no.nav.hm.grunndata.rapid.dto.MediaType
+
 import java.time.LocalDateTime
 import java.util.*
 
@@ -11,7 +13,6 @@ import java.util.*
 data class Media (
     @field:Id
     val uri: String,
-    val origUri: String,
     val oid:    UUID,
     val priority:  Int=1,
     val type: MediaType = MediaType.IMAGE,
@@ -25,5 +26,14 @@ data class Media (
 enum class MediaStatus {
     ACTIVE, INACTIVE
 }
+
+fun Media.toDTO(): MediaDTO = MediaDTO(
+    uri = uri,
+    priority = 1,
+    source = source,
+    type = type,
+    text = text
+)
+
 
 
