@@ -85,7 +85,7 @@ micronaut {
 }
 
 application {
-    mainClass.set("no.nav.hm.grunndata.register.Application")
+    mainClass.set("no.nav.hm.grunndata.media.Application")
 }
 
 java {
