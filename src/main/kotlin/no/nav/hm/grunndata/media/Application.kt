@@ -6,7 +6,7 @@ object Application {
     @JvmStatic
     fun main(args: Array<String>) {
         Micronaut.build()
-            .packages("no.nav.hm.grunndata.db")
+            .packages("no.nav.hm.grunndata.media")
             .mainClass(Application.javaClass)
             .start()
     }
