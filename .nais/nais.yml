@@ -50,7 +50,7 @@ spec:
             envVarPrefix: DB
         cascadingDelete: false
     buckets:
-      - name: hm-grunndata-media
+      - name: {{ bucket_name }}
   kafka:
     pool: {{ kafka_cluster }}
   accessPolicy:
