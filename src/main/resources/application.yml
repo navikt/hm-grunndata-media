@@ -37,6 +37,7 @@ jackson:
   bean-introspection-module: true
   serialization:
     indentOutput: true
+
 datasources:
   default:
     url: ${DB_JDBC_URL:`jdbc:tc:postgresql:14:///gdb?TC_INITSCRIPT=file:src/test/resources/postgres/postgres-init.sql`}
@@ -50,3 +51,17 @@ flyway:
   datasources:
     default:
       locations: classpath:db
+      clean-on-validation-error: true # only during dev and poc, will remove when we go to production.
+
+# Rapids and rivers config
+rapidsandrivers:
+  enabled: ${RAPIDSANDRIVERS_ENABLED:false}
+kafka:
+  topic: teamdigihot.hm-grunndata-v1
+  consumerGroupId: hm-grunndata-media-g1
+  trustStorePath: ${KAFKA_TRUSTSTORE_PATH:}
+  trustStorePassword: ${KAFKA_CREDSTORE_PASSWORD:}
+  keystorePath: ${KAFKA_KEYSTORE_PATH:}
+  keystorePassword: ${KAFKA_CREDSTORE_PASSWORD:}
+  health:
+    enabled: false
