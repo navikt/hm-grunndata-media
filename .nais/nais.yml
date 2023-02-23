@@ -1,0 +1,60 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: hm-grunndata-media
+  namespace: teamdigihot
+  labels:
+    team: teamdigihot
+spec:
+  image: {{ image }}
+  port: 8080
+  liveness:
+    path: /internal/isAlive
+    initialDelay: 20
+  readiness:
+    path: /internal/isReady
+    initialDelay: 20
+  replicas:
+    min: {{ min_replicas }}
+    max: {{ max_replicas }}
+    cpuThresholdPercentage: 50
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2048Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+  prometheus:
+    enabled: true
+    path: /internal/prometheus
+  env:
+    - name: DB_DRIVER
+      value: "org.postgresql.Driver"
+    - name: DB_JDBC_URL
+      value: "jdbc:postgresql://${DB_HOST}:5432/media"
+    - name: RAPIDSANDRIVERS_ENABLED
+      value: "{{ rapidsandrivers_enabled }}"
+  gcp:
+    sqlInstances:
+      - name: hm-grunndata-media
+        type: POSTGRES_14
+        tier: {{ disk_tier }}
+        diskType: SSD
+        highAvailability: true
+        diskSize: {{ disk_size }}
+        diskAutoresize: true
+        autoBackupTime: "03:00"
+        databases:
+          - name: media
+            envVarPrefix: DB
+        cascadingDelete: false
+  kafka:
+    pool: {{ kafka_cluster }}
+  accessPolicy:
+    outbound:
+      rules:
+        - application: hm-grunndata-db
+    inbound:
+      rules:
+        - application: hm-grunndata-register
