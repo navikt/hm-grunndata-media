@@ -2,20 +2,20 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val jvmTarget = "17"
-val micronautVersion="3.8.5"
+val micronautVersion = "3.8.5"
 val kafkaVersion = "3.2.1"
 val micrometerRegistryPrometheusVersion = "1.9.1"
 val junitJupiterVersion = "5.9.0"
 val jacksonVersion = "2.13.4"
 val logbackClassicVersion = "1.4.5"
 val logbackEncoderVersion = "7.2"
-val postgresqlVersion= "42.5.1"
-val tcVersion= "1.17.6"
+val postgresqlVersion = "42.5.1"
+val tcVersion = "1.17.6"
 val mockkVersion = "1.13.2"
 val kotestVersion = "5.5.4"
 val openSearchRestClientVersion = "1.3.5"
-val rapidsRiversVersion="202301310932"
-val grunndataDtoVersion = "202302221558"
+val rapidsRiversVersion = "202301310932"
+val grunndataDtoVersion = "202302241543"
 
 group = "no.nav.hm"
 version = properties["version"] ?: "local-build"
@@ -121,8 +121,8 @@ tasks.withType<Wrapper> {
 repositories {
     mavenLocal()
     mavenCentral()
-    maven("https://packages.confluent.io/maven/")
     maven("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
-
+    maven("https://packages.confluent.io/maven/")
+    
 }
 
