@@ -17,6 +17,8 @@ data class Media (
     val priority:  Int=1,
     val type: MediaType = MediaType.IMAGE,
     val text:   String?=null,
+    val size: Long,
+    val md5: String,
     val status: MediaStatus = MediaStatus.ACTIVE,
     val source: MediaSourceType = MediaSourceType.HMDB,
     val created: LocalDateTime = LocalDateTime.now(),

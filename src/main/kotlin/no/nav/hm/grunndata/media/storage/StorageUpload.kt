@@ -4,15 +4,13 @@ import com.google.cloud.storage.BlobId
 import com.google.cloud.storage.BlobInfo
 import com.google.cloud.storage.Storage
 import io.micronaut.objectstorage.googlecloud.GoogleCloudStorageConfiguration
-import io.micronaut.objectstorage.googlecloud.GoogleCloudStorageOperations
 import jakarta.inject.Singleton
 import org.slf4j.LoggerFactory
 import java.net.URI
 
 
 @Singleton
-class StorageUpload(private val objectStorage: GoogleCloudStorageOperations,
-                    private val storage: Storage,
+class StorageUpload(private val storage: Storage,
                     private val config: GoogleCloudStorageConfiguration
 ) {
 
