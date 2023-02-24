@@ -1,4 +1,8 @@
 micronaut:
+  object-storage:
+    gcp:
+      default:
+        bucket: ${GCP_BUCKET_NAME:}
   application:
     name: hm-grunndata-media
     thread-selection: auto
@@ -47,6 +51,7 @@ datasources:
     maximum-pool-size: 8
     minimum-idle: 0
     pool-name: default
+
 flyway:
   datasources:
     default:
@@ -56,6 +61,7 @@ flyway:
 # Rapids and rivers config
 rapidsandrivers:
   enabled: ${RAPIDSANDRIVERS_ENABLED:false}
+
 kafka:
   topic: teamdigihot.hm-grunndata-v1
   consumerGroupId: hm-grunndata-media-g1
@@ -65,3 +71,8 @@ kafka:
   keystorePassword: ${KAFKA_CREDSTORE_PASSWORD:}
   health:
     enabled: false
+
+gcp:
+  project-id:
+  credentials:
+    location: ${GCP_CREDENTIALS_LOCATION:/path/to/credential}

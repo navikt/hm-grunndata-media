@@ -35,6 +35,8 @@ spec:
       value: "jdbc:postgresql://${DB_HOST}:5432/media"
     - name: RAPIDSANDRIVERS_ENABLED
       value: "{{ rapidsandrivers_enabled }}"
+    - name: GCP_BUCKET_NAME
+      value: "{{ bucket_name }}"
   gcp:
     sqlInstances:
       - name: hm-grunndata-media
