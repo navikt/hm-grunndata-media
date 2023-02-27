@@ -3,6 +3,7 @@ package no.nav.hm.grunndata.media
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.micronaut.context.annotation.Context
 import io.micronaut.context.annotation.Requires
+import io.micronaut.context.annotation.Value
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.KafkaRapid
@@ -29,7 +30,8 @@ open class MediaSyncRiver(
     river: RiverHead,
     private val objectMapper: ObjectMapper,
     private val storageUpload: StorageUpload,
-    private val mediaRepository: MediaRepository
+    private val mediaRepository: MediaRepository,
+    @Value("\${media.source.hmdb.url}") private val hmdbMediaUrl: String
 ) : River.PacketListener {
 
     companion object {
@@ -84,9 +86,9 @@ open class MediaSyncRiver(
 
     private fun buildUri(media: MediaDTO): URI {
         if (media.source == MediaSourceType.HMDB) {
-            return URI("http")
+            return URI("$hmdbMediaUrl/${media.uri}")
         }
-        throw Exception()
+        throw UknownMediaSource("Unknown media source")
     }
 
 }
