@@ -20,10 +20,12 @@ import no.nav.hm.rapids_rivers.micronaut.RiverHead
 import org.slf4j.LoggerFactory
 import java.net.URI
 import java.time.LocalDateTime
+import java.util.*
+import javax.transaction.Transactional
 
 @Context
 @Requires(bean = KafkaRapid::class)
-class MediaSyncRiver(
+open class MediaSyncRiver(
     river: RiverHead,
     private val objectMapper: ObjectMapper,
     private val storageUpload: StorageUpload,
@@ -53,14 +55,15 @@ class MediaSyncRiver(
         runBlocking {
             val mediaStateList = mediaRepository.findByOid(dto.id)
             val dtoMediaList = dto.media
-            compareAndPersistMedia(dtoMediaList, mediaStateList, dto)
+            compareAndPersistMedia(dtoMediaList, mediaStateList, dto.id)
         }
     }
 
-    private suspend fun compareAndPersistMedia(
+    @Transactional
+    open suspend fun compareAndPersistMedia(
         dtoMediaList: List<MediaDTO>,
         mediaStateList: List<Media>,
-        dto: ProductDTO
+        oid: UUID
     ) {
         val newMediaList = dtoMediaList.filter { m -> mediaStateList.none { m.uri == it.uri } }
         val notInUseList = mediaStateList.filter { n -> dtoMediaList.none { n.uri == it.uri } }
@@ -72,7 +75,7 @@ class MediaSyncRiver(
             val upload = storageUpload.uploadStream(buildUri(it))
             mediaRepository.save(
                 Media(
-                    uri = it.uri, oid = dto.id, size = 0, type = it.type,
+                    uri = it.uri, oid = oid, size = 0, type = it.type,
                     priority = it.priority, source = it.source, text = it.text, md5 = "123"
                 )
             )
