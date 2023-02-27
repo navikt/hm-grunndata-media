@@ -6,5 +6,6 @@
   "min_replicas": 1,
   "max_replicas": 1,
   "schedulers_enabled": false,
-  "bucket_name": "hm-grunndata-media-dev"
+  "bucket_name": "hm-grunndata-media-dev",
+  "media_storage_enabled": false
 }

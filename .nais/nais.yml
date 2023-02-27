@@ -6,7 +6,7 @@ metadata:
   labels:
     team: teamdigihot
 spec:
-  image: {{ image }}
+  image: { { image } }
   port: 8080
   liveness:
     path: /internal/isAlive
@@ -15,8 +15,8 @@ spec:
     path: /internal/isReady
     initialDelay: 20
   replicas:
-    min: {{ min_replicas }}
-    max: {{ max_replicas }}
+    min: { { min_replicas } }
+    max: { { max_replicas } }
     cpuThresholdPercentage: 50
   resources:
     limits:
@@ -34,17 +34,19 @@ spec:
     - name: DB_JDBC_URL
       value: "jdbc:postgresql://${DB_HOST}:5432/media"
     - name: RAPIDSANDRIVERS_ENABLED
-      value: "{{ rapidsandrivers_enabled }}"
+      value: { { rapidsandrivers_enabled } }
     - name: GCP_BUCKET_NAME
       value: "{{ bucket_name }}"
+    - name: MEDIA_STORAGE_ENABLED
+      value: { { media_storage_enabled } }
   gcp:
     sqlInstances:
       - name: hm-grunndata-media
         type: POSTGRES_14
-        tier: {{ disk_tier }}
+        tier: { { disk_tier } }
         diskType: SSD
         highAvailability: true
-        diskSize: {{ disk_size }}
+        diskSize: { { disk_size } }
         diskAutoresize: true
         autoBackupTime: "03:00"
         databases:
@@ -52,9 +54,9 @@ spec:
             envVarPrefix: DB
         cascadingDelete: false
     buckets:
-      - name: {{ bucket_name }}
+      - name: { { bucket_name } }
   kafka:
-    pool: {{ kafka_cluster }}
+    pool: { { kafka_cluster } }
   accessPolicy:
     outbound:
       rules:

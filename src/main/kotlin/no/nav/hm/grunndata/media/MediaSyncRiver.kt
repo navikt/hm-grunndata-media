@@ -75,8 +75,8 @@ open class MediaSyncRiver(
             val upload = storageUpload.uploadStream(buildUri(it))
             mediaRepository.save(
                 Media(
-                    uri = it.uri, oid = oid, size = 0, type = it.type,
-                    priority = it.priority, source = it.source, text = it.text, md5 = "123"
+                    uri = it.uri, oid = oid, size = upload.size, type = it.type,
+                    priority = it.priority, source = it.source, text = it.text, md5 = upload.md5hash
                 )
             )
         }
