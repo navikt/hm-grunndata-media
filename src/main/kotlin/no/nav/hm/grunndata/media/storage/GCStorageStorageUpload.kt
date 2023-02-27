@@ -14,7 +14,7 @@ import java.net.URI
 class GCStorageStorageUpload(
     private val storage: Storage,
     private val config: GoogleCloudStorageConfiguration,
-    @Value("\${media.storage.enabled}:false") private val enabled: Boolean = false
+    @Value("\${media.storage.enabled:false}") private val enabled: Boolean
 ) : StorageUpload {
 
     companion object {
@@ -38,6 +38,14 @@ class GCStorageStorageUpload(
             eTag = "notstored", key = "notstored", size = 0,
             md5hash = "notstored"
         )
+    }
+
+    override fun delete(uri: URI): Boolean {
+        val objectName = uri.path.substringAfterLast("/").trim()
+        val key = "$PREFIX/$objectName"
+        LOG.info("Deleting $key from gcp bucket")
+        val blobId: BlobId = BlobId.of(config.bucket, key)
+        return storage.delete(blobId)
     }
 
 }

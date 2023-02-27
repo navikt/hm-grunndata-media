@@ -2,7 +2,7 @@ micronaut:
   object-storage:
     gcp:
       default:
-        bucket: ${GCP_BUCKET_NAME:hm-grunndata-media}
+        bucket: ${GCP_BUCKET_NAME:}
   application:
     name: hm-grunndata-media
     thread-selection: auto

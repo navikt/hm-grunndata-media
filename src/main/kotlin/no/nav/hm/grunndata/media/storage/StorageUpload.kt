@@ -4,4 +4,6 @@ import java.net.URI
 
 interface StorageUpload {
     fun uploadStream(uri: URI): StorageResponse
+
+    fun delete(uri: URI): Boolean
 }
