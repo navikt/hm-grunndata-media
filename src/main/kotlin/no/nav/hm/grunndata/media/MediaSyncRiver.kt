@@ -74,13 +74,23 @@ open class MediaSyncRiver(
         }
         newMediaList.forEach {
             // upload and save
-            val upload = storageUpload.uploadStream(buildUri(it))
-            mediaRepository.save(
-                Media(
-                    uri = it.uri, oid = oid, size = upload.size, type = it.type,
-                    priority = it.priority, source = it.source, text = it.text, md5 = upload.md5hash
+            try {
+                val upload = storageUpload.uploadStream(buildUri(it))
+                mediaRepository.save(
+                    Media(
+                        uri = it.uri, oid = oid, size = upload.size, type = it.type,
+                        priority = it.priority, source = it.source, text = it.text, md5 = upload.md5hash
+                    )
                 )
-            )
+            } catch (e: Exception) {
+                LOG.error("Got exception while trying to upload ${it.uri} to cloud", e)
+                mediaRepository.save(
+                    Media(
+                        uri = it.uri, oid = oid, size = 0, type = it.type, status = MediaStatus.ERROR,
+                        priority = it.priority, source = it.source, text = it.text, md5 = ""
+                    )
+                )
+            }
         }
     }
 

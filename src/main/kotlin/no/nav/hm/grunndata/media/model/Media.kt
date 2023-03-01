@@ -10,13 +10,13 @@ import java.time.LocalDateTime
 import java.util.*
 
 @MappedEntity("media_v1")
-data class Media (
+data class Media(
     @field:Id
     val uri: String,
-    val oid:    UUID,
-    val priority:  Int=1,
+    val oid: UUID,
+    val priority: Int = 1,
     val type: MediaType = MediaType.IMAGE,
-    val text:   String?=null,
+    val text: String? = null,
     val size: Long,
     val md5: String,
     val status: MediaStatus = MediaStatus.ACTIVE,
@@ -26,7 +26,7 @@ data class Media (
 )
 
 enum class MediaStatus {
-    ACTIVE, INACTIVE
+    ACTIVE, INACTIVE, ERROR
 }
 
 fun Media.toDTO(): MediaDTO = MediaDTO(
