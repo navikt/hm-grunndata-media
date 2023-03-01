@@ -43,6 +43,7 @@ class MediaSyncRiver(
         val dtoVersion = packet["dtoVersion"].asLong()
         if (dtoVersion > rapidDTOVersion) LOG.warn("dto version $dtoVersion is newer than $rapidDTOVersion")
         val dto = objectMapper.treeToValue(packet["payload"], ProductDTO::class.java)
+        LOG.info("Got eventId: $eventId for product ${dto.id}")
         runBlocking {
             val mediaStateList = mediaRepository.findByOid(dto.id)
             val dtoMediaList = dto.media

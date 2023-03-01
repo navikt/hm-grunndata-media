@@ -40,9 +40,11 @@ class AgreementMediaSyncRiver(
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         val eventId = packet["eventId"].asText()
+
         val dtoVersion = packet["dtoVersion"].asLong()
         if (dtoVersion > rapidDTOVersion) LOG.warn("dto version $dtoVersion is newer than $rapidDTOVersion")
         val dto = objectMapper.treeToValue(packet["payload"], AgreementDTO::class.java)
+        LOG.info("Got eventId: $eventId for agreement ${dto.id}")
         runBlocking {
             val mediaStateList = mediaRepository.findByOid(dto.id)
             val dtoMediaList = dto.attachments.flatMap { it.media }
