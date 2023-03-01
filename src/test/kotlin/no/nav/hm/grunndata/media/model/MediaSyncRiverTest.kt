@@ -8,8 +8,8 @@ import io.micronaut.test.annotation.MockBean
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import io.mockk.mockk
 import no.nav.helse.rapids_rivers.RapidsConnection
-import no.nav.hm.grunndata.media.MediaSyncRiver
 import no.nav.hm.grunndata.media.storage.StorageUpload
+import no.nav.hm.grunndata.media.sync.AgreementMediaSyncRiver
 import no.nav.hm.grunndata.rapid.dto.MediaDTO
 import no.nav.hm.rapids_rivers.micronaut.RiverHead
 import org.junit.jupiter.api.Test
@@ -26,7 +26,7 @@ class MediaSyncRiverTest(private val objectMapper: ObjectMapper, private val med
 
     @Test
     fun testMediaSync() {
-        val mediaSyncRiver = MediaSyncRiver(
+        val mediaSyncRiver = AgreementMediaSyncRiver(
             river = RiverHead(kafkaRapid()),
             storageUpload = storageUpload(),
             objectMapper = objectMapper,
