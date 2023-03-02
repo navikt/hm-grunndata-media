@@ -45,7 +45,7 @@ open class MediaHandler(
                 val upload = storageUpload.uploadStream(buildUri(it, ownerDto))
                 mediaRepository.save(
                     Media(
-                        uri = it.uri, oid = oid, size = upload.size, type = it.type,
+                        uri = it.uri, oid = oid, size = upload.size, type = it.type, sourceUri = it.sourceUri,
                         priority = it.priority, source = it.source, text = it.text, md5 = upload.md5hash
                     )
                 )
@@ -54,7 +54,7 @@ open class MediaHandler(
                 mediaRepository.save(
                     Media(
                         uri = it.uri, oid = oid, size = 0, type = it.type, status = MediaStatus.ERROR,
-                        priority = it.priority, source = it.source, text = it.text, md5 = ""
+                        priority = it.priority, source = it.source, text = it.text, md5 = "", sourceUri = it.sourceUri
                     )
                 )
             }
@@ -72,5 +72,5 @@ open class MediaHandler(
         }
         throw UknownMediaSource("Unknown media source")
     }
-    
+
 }

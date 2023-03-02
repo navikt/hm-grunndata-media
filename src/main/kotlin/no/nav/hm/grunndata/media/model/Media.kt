@@ -14,6 +14,7 @@ data class Media(
     @field:Id
     val uri: String,
     val oid: UUID,
+    val sourceUri: String,
     val priority: Int = 1,
     val type: MediaType = MediaType.IMAGE,
     val text: String? = null,
@@ -31,6 +32,7 @@ enum class MediaStatus {
 
 fun Media.toDTO(): MediaDTO = MediaDTO(
     uri = uri,
+    sourceUri = sourceUri,
     priority = 1,
     source = source,
     type = type,
