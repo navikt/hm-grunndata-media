@@ -6,6 +6,7 @@ import no.nav.hm.grunndata.media.model.Media
 import no.nav.hm.grunndata.media.model.MediaRepository
 import no.nav.hm.grunndata.media.model.MediaStatus
 import no.nav.hm.grunndata.media.storage.StorageUpload
+import no.nav.hm.grunndata.rapid.dto.AgreementDTO
 import no.nav.hm.grunndata.rapid.dto.MediaDTO
 import no.nav.hm.grunndata.rapid.dto.MediaSourceType
 import org.slf4j.LoggerFactory
@@ -30,7 +31,8 @@ open class MediaHandler(
     open suspend fun compareAndPersistMedia(
         dtoMediaList: List<MediaDTO>,
         mediaStateList: List<Media>,
-        oid: UUID
+        oid: UUID,
+        ownerDto: Any,
     ) {
         val newMediaList = dtoMediaList.filter { m -> mediaStateList.none { m.uri == it.uri } }
         val notInUseList = mediaStateList.filter { n -> dtoMediaList.none { n.uri == it.uri } }
@@ -40,7 +42,7 @@ open class MediaHandler(
         newMediaList.forEach {
             // upload and save
             try {
-                val upload = storageUpload.uploadStream(buildUri(it))
+                val upload = storageUpload.uploadStream(buildUri(it, ownerDto))
                 mediaRepository.save(
                     Media(
                         uri = it.uri, oid = oid, size = upload.size, type = it.type,
@@ -59,10 +61,16 @@ open class MediaHandler(
         }
     }
 
-    private fun buildUri(media: MediaDTO): URI {
-        if (media.source == MediaSourceType.HMDB) {
-            return URI("$hmdbMediaUrl/${media.uri}")
+    private fun buildUri(media: MediaDTO, dto: Any): URI {
+        if (dto is AgreementDTO) {
+            return if (media.uri.contains("-"))// HACK
+                URI("$hmdbMediaUrl/doclevfiles/${media.uri}")
+            else
+                URI("$hmdbMediaUrl/hmidocfiles/${media.uri}")
+        } else if (media.source == MediaSourceType.HMDB) {
+            return URI("$hmdbMediaUrl/orig/${media.uri}")
         }
         throw UknownMediaSource("Unknown media source")
     }
+    
 }

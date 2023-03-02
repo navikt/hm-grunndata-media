@@ -33,7 +33,7 @@ class MediaSyncRiverTest(private val mediaRepository: MediaRepository) {
                 MediaDTO(uri = "4.jpg", oid = oid, priority = 4, text = "bilde 4"),
                 MediaDTO(uri = "5.jpg", oid = oid, priority = 5, text = "bilde 5")
             )
-            mediaHandler.compareAndPersistMedia(dtoList, mediaList, oid)
+            mediaHandler.compareAndPersistMedia(dtoList, mediaList, oid, Any())
             val inDb = mediaRepository.findByOid(oid)
             inDb.shouldNotBeNull()
             inDb.size shouldBe 5

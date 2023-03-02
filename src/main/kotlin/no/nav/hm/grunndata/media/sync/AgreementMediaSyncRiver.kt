@@ -48,7 +48,7 @@ class AgreementMediaSyncRiver(
         runBlocking {
             val mediaStateList = mediaRepository.findByOid(dto.id)
             val dtoMediaList = dto.attachments.flatMap { it.media }
-            mediaHandler.compareAndPersistMedia(dtoMediaList, mediaStateList, dto.id)
+            mediaHandler.compareAndPersistMedia(dtoMediaList, mediaStateList, dto.id, dto)
         }
     }
 
