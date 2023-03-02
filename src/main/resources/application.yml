@@ -81,4 +81,4 @@ media:
     enabled: ${MEDIA_STORAGE_ENABLED:false}
   source:
     hmdb:
-      url: ${MEDIA_SOURCE_HMDB_URL:`https://www.hjelpemiddeldatabasen.no/blobs/orig`}
+      url: ${MEDIA_SOURCE_HMDB_URL:`https://www.hjelpemiddeldatabasen.no/blobs`}
