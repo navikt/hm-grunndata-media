@@ -98,10 +98,12 @@ java {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = jvmTarget
+    kapt.includeCompileClasspath = false
 }
 
 tasks.named<KotlinCompile>("compileTestKotlin") {
     kotlinOptions.jvmTarget = jvmTarget
+    kapt.includeCompileClasspath = false
 }
 
 tasks.withType<Test> {
