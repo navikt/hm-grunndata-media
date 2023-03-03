@@ -13,9 +13,10 @@ val postgresqlVersion = "42.5.1"
 val tcVersion = "1.17.6"
 val mockkVersion = "1.13.2"
 val kotestVersion = "5.5.4"
-val openSearchRestClientVersion = "1.3.5"
+val jakartaPersistenceVersion = "3.1.0"
 val rapidsRiversVersion = "202303011052"
 val grunndataDtoVersion = "202303021621"
+
 
 group = "no.nav.hm"
 version = properties["version"] ?: "local-build"
@@ -45,10 +46,11 @@ dependencies {
 
     // micronaut-data
     implementation("io.micronaut.data:micronaut-data-jdbc")
-    implementation("jakarta.persistence:jakarta.persistence-api:3.1.0")
+    implementation("jakarta.persistence:jakarta.persistence-api:$jakartaPersistenceVersion")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     runtimeOnly("io.micronaut.sql:micronaut-jdbc-hikari")
-    annotationProcessor("io.micronaut.data:micronaut-data-processor")
+    kapt("io.micronaut.data:micronaut-data-processor")
+
     implementation("org.postgresql:postgresql:${postgresqlVersion}")
     implementation("io.micronaut.flyway:micronaut-flyway")
     implementation("io.micronaut:micronaut-runtime")
@@ -67,7 +69,7 @@ dependencies {
     testImplementation("io.micronaut.test:micronaut-test-kotest5")
     testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-core-jvm:$kotestVersion")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
     testImplementation("org.testcontainers:postgresql:${tcVersion}")
     // Rapids and Rivers
     implementation("com.github.navikt:hm-rapids-and-rivers-v2-core:$rapidsRiversVersion")
@@ -115,7 +117,7 @@ tasks.withType<Test> {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "7.5.1"
+    gradleVersion = "8.0.1"
 }
 
 repositories {
