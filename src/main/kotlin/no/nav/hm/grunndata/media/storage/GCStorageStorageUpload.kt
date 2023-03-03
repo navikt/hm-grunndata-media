@@ -22,18 +22,20 @@ class GCStorageStorageUpload(
         private val LOG = LoggerFactory.getLogger(GCStorageStorageUpload::class.java)
     }
 
-    override fun uploadStream(uri: URI): StorageResponse {
+    override fun uploadStream(sourceUri: URI, destinationUri: URI): StorageResponse {
         return if (enabled) {
-            val objectName = uri.path.substringAfterLast("/").trim()
+            val objectName = destinationUri.path.substringAfterLast("/").trim()
             val key = "$PREFIX/$objectName"
             LOG.info("Store $key to gcp")
             val blobId: BlobId = BlobId.of(config.bucket, key)
             val blobInfo = BlobInfo.newBuilder(blobId).build()
-            val blob = storage.createFrom(blobInfo, uri.toURL().openStream())
-            StorageResponse(
-                eTag = blob.etag, key = key, size = blob.size,
-                md5hash = blob.md5ToHexString
-            )
+            sourceUri.toURL().openStream().use {
+                val blob = storage.createFrom(blobInfo, it)
+                StorageResponse(
+                    eTag = blob.etag, key = key, size = blob.size,
+                    md5hash = blob.md5ToHexString
+                )
+            }
         } else StorageResponse(
             eTag = "notstored", key = "notstored", size = 0,
             md5hash = "notstored"

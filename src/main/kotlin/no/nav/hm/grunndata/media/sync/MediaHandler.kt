@@ -40,7 +40,7 @@ open class MediaHandler(
         newMediaList.forEach {
             // upload and save
             try {
-                val upload = storageUpload.uploadStream(URI(it.sourceUri))
+                val upload = storageUpload.uploadStream(sourceUri = URI(it.sourceUri), destinationUri = URI(it.uri))
                 mediaRepository.save(
                     Media(
                         uri = it.uri, oid = oid, size = upload.size, type = it.type, sourceUri = it.sourceUri,
