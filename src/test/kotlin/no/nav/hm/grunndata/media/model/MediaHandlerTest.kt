@@ -6,7 +6,7 @@ import io.kotest.matchers.shouldBe
 import io.micronaut.test.annotation.MockBean
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import io.mockk.mockk
-import no.nav.hm.grunndata.media.storage.StorageUpload
+import no.nav.hm.grunndata.media.storage.StorageService
 import no.nav.hm.grunndata.media.sync.MediaHandler
 import no.nav.hm.grunndata.rapid.dto.MediaDTO
 import org.junit.jupiter.api.Test
@@ -15,8 +15,8 @@ import java.util.*
 @MicronautTest
 class MediaSyncRiverTest(private val mediaRepository: MediaRepository) {
 
-    @MockBean(StorageUpload::class)
-    fun storageUpload(): StorageUpload = mockk(relaxed = true)
+    @MockBean(StorageService::class)
+    fun storageUpload(): StorageService = mockk(relaxed = true)
 
     @Test
     fun testMediaSync() {

@@ -7,7 +7,7 @@ import java.net.URI
 
 @MicronautTest
 class MediaUploadTest(
-    private val gcstorageUpload: GCStorageStorageUpload,
+    private val gcstorageUpload: GCStorageStorageService,
     private val objectMapper: ObjectMapper
 ) {
 

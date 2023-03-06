@@ -4,14 +4,15 @@ import io.micronaut.data.jdbc.annotation.JdbcRepository
 import io.micronaut.data.model.query.builder.sql.Dialect
 import io.micronaut.data.repository.jpa.kotlin.CoroutineJpaSpecificationExecutor
 import io.micronaut.data.repository.kotlin.CoroutinePageableCrudRepository
+import java.time.LocalDateTime
 import java.util.*
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
-interface MediaRepository: CoroutinePageableCrudRepository<Media, String>, CoroutineJpaSpecificationExecutor<String> {
+interface MediaRepository : CoroutinePageableCrudRepository<Media, String>, CoroutineJpaSpecificationExecutor<String> {
 
-    suspend fun findByUri(uri:String): Media?
+    suspend fun findByUri(uri: String): Media?
+    suspend fun findByOid(oid: UUID): List<Media>
 
-    suspend fun findByOid(oid:UUID): List<Media>
-
+    suspend fun findByStatusAndUpdatedBefore(status: MediaStatus, updated: LocalDateTime): List<Media>
 
 }
