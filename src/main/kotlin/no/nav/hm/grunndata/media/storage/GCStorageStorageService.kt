@@ -3,6 +3,7 @@ package no.nav.hm.grunndata.media.storage
 import com.google.cloud.storage.BlobId
 import com.google.cloud.storage.BlobInfo
 import com.google.cloud.storage.Storage
+import io.micronaut.http.multipart.CompletedFileUpload
 import io.micronaut.objectstorage.googlecloud.GoogleCloudStorageConfiguration
 import jakarta.inject.Singleton
 import org.slf4j.LoggerFactory
@@ -39,6 +40,10 @@ class GCStorageStorageService(
             eTag = "notstored", key = "notstored", size = 0,
             md5hash = "notstored"
         )
+    }
+
+    override fun uploadFile(file: CompletedFileUpload): StorageResponse {
+        TODO("Not yet implemented")
     }
 
     override fun delete(uri: URI): Boolean {
