@@ -5,6 +5,8 @@ import com.google.cloud.storage.BlobInfo
 import com.google.cloud.storage.Storage
 import io.micronaut.http.multipart.CompletedFileUpload
 import io.micronaut.objectstorage.googlecloud.GoogleCloudStorageConfiguration
+import io.micronaut.objectstorage.googlecloud.GoogleCloudStorageOperations
+import io.micronaut.objectstorage.request.UploadRequest
 import jakarta.inject.Singleton
 import org.slf4j.LoggerFactory
 import java.net.URI
@@ -14,7 +16,8 @@ import java.net.URI
 class GCStorageStorageService(
     private val storage: Storage,
     private val config: GoogleCloudStorageConfiguration,
-    private val mediaConfig: MediaStorageConfig
+    private val mediaConfig: MediaStorageConfig,
+    private val gcsOperations: GoogleCloudStorageOperations,
 ) : StorageService {
 
     companion object {
@@ -32,19 +35,23 @@ class GCStorageStorageService(
             sourceUri.toURL().openStream().use {
                 val blob = storage.createFrom(blobInfo, it)
                 StorageResponse(
-                    eTag = blob.etag, key = key, size = blob.size,
+                    etag = blob.etag, key = key, size = blob.size,
                     md5hash = blob.md5ToHexString
                 )
             }
         } else StorageResponse(
-            eTag = "notstored", key = "notstored", size = 0,
+            etag = "notstored", key = "notstored", size = 0,
             md5hash = "notstored"
         )
     }
 
-    override fun uploadFile(file: CompletedFileUpload): StorageResponse {
-        TODO("Not yet implemented")
+    override fun uploadFile(file: CompletedFileUpload, destinationUri: URI): StorageResponse {
+        val objectName = destinationUri.path.substringAfterLast("/").trim()
+        val key = "$PREFIX/$objectName"
+        val response = gcsOperations.upload(UploadRequest.fromCompletedFileUpload(file, key)).nativeResponse
+        return StorageResponse(etag = response.etag, key = key, size = response.size, md5hash = response.md5ToHexString)
     }
+
 
     override fun delete(uri: URI): Boolean {
         val objectName = uri.path.substringAfterLast("/").trim()
