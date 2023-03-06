@@ -80,3 +80,6 @@ media:
   storage:
     enabled: ${MEDIA_STORAGE_ENABLED:false}
     retention: 90d
+
+schedulers:
+  enabled: false

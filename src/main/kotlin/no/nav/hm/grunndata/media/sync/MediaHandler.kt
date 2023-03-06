@@ -5,7 +5,7 @@ import jakarta.inject.Singleton
 import no.nav.hm.grunndata.media.model.Media
 import no.nav.hm.grunndata.media.model.MediaRepository
 import no.nav.hm.grunndata.media.model.MediaStatus
-import no.nav.hm.grunndata.media.storage.StorageUpload
+import no.nav.hm.grunndata.media.storage.StorageService
 import no.nav.hm.grunndata.rapid.dto.MediaDTO
 import org.slf4j.LoggerFactory
 import java.net.URI
@@ -16,7 +16,7 @@ import javax.transaction.Transactional
 @Singleton
 open class MediaHandler(
     private val mediaRepository: MediaRepository,
-    private val storageUpload: StorageUpload,
+    private val storageService: StorageService,
     @Value("\${media.source.hmdb.url}") private val hmdbMediaUrl: String
 ) {
 
@@ -40,7 +40,7 @@ open class MediaHandler(
         newMediaList.forEach {
             // upload and save
             try {
-                val upload = storageUpload.uploadStream(sourceUri = URI(it.sourceUri), destinationUri = URI(it.uri))
+                val upload = storageService.uploadStream(sourceUri = URI(it.sourceUri), destinationUri = URI(it.uri))
                 mediaRepository.save(
                     Media(
                         uri = it.uri, oid = oid, size = upload.size, type = it.type, sourceUri = it.sourceUri,
