@@ -7,10 +7,12 @@ import io.micronaut.http.multipart.CompletedFileUpload
 import kotlinx.coroutines.runBlocking
 import no.nav.hm.grunndata.media.model.Media
 import no.nav.hm.grunndata.media.model.MediaRepository
+import no.nav.hm.grunndata.media.model.MediaStatus
 import no.nav.hm.grunndata.media.model.toDTO
 import no.nav.hm.grunndata.media.sync.BadRequestException
 import no.nav.hm.grunndata.media.sync.UknownMediaSource
 import no.nav.hm.grunndata.rapid.dto.MediaDTO
+import no.nav.hm.grunndata.rapid.dto.MediaSourceType
 import no.nav.hm.grunndata.rapid.dto.MediaType
 import org.slf4j.LoggerFactory
 import java.net.URI
@@ -37,7 +39,8 @@ class UploadMediaController(private val storageService: StorageService,
             if (mediaRepository.findByUri(uri) != null) throw BadRequestException("Duplicate, media already exist")
             val response = storageService.uploadFile(file, URI(uri))
             mediaRepository.save(
-                Media(oid = oid, sourceUri = uri, uri = uri, type = type, size = response.size, md5 = response.md5hash)
+                Media(oid = oid, sourceUri = uri, uri = uri, type = type, size = response.size, status = MediaStatus.INACTIVE,
+                    md5 = response.md5hash, source = MediaSourceType.REGISTER) // should only come from register
             ).toDTO()
         }
     }
