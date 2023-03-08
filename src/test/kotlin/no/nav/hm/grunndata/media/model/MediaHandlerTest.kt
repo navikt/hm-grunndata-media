@@ -20,7 +20,7 @@ class MediaSyncRiverTest(private val mediaRepository: MediaRepository) {
 
     @Test
     fun testMediaSync() {
-        val mediaHandler = MediaHandler(mediaRepository, storageUpload(), "http://localhost")
+        val mediaHandler = MediaHandler(mediaRepository, storageUpload())
         val oid = UUID.randomUUID()
         runBlocking {
             val media1 = Media(
