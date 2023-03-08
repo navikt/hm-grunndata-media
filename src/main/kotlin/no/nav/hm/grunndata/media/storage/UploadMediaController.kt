@@ -39,7 +39,7 @@ class UploadMediaController(private val storageService: StorageService,
             if (mediaRepository.findByUri(uri) != null) throw BadRequestException("Duplicate, media already exist")
             val response = storageService.uploadFile(file, URI(uri))
             mediaRepository.save(
-                Media(oid = oid, sourceUri = uri, uri = uri, type = type, size = response.size, status = MediaStatus.INACTIVE,
+                Media(oid = oid, sourceUri = uri, uri = uri, type = type, size = response.size, status = MediaStatus.ACTIVE,
                     md5 = response.md5hash, source = MediaSourceType.REGISTER) // should only come from register
             ).toDTO()
         }
