@@ -27,9 +27,7 @@ class GCStorageStorageService(
 
     override fun uploadStream(sourceUri: URI, destinationUri: URI): StorageResponse {
         return if (mediaConfig.enabled) {
-            val objectName = destinationUri.path.substringAfterLast("/").trim()
-            val key = "$PREFIX/$objectName"
-            LOG.info("Store $key to gcp")
+            val key = makeKey(destinationUri)
             val blobId: BlobId = BlobId.of(config.bucket, key)
             val blobInfo = BlobInfo.newBuilder(blobId).build()
             sourceUri.toURL().openStream().use {
@@ -46,16 +44,21 @@ class GCStorageStorageService(
     }
 
     override fun uploadFile(file: CompletedFileUpload, destinationUri: URI): StorageResponse {
-        val objectName = destinationUri.path.substringAfterLast("/").trim()
-        val key = "$PREFIX/$objectName"
+        val key = makeKey(destinationUri)
         val response = gcsOperations.upload(UploadRequest.fromCompletedFileUpload(file, key)).nativeResponse
         return StorageResponse(etag = response.etag, key = key, size = response.size, md5hash = response.md5ToHexString)
     }
 
+    private fun makeKey(destinationUri: URI): String {
+        val objectName = destinationUri.path.substringAfterLast("/").trim()
+        val key = "$PREFIX/$objectName"
+        LOG.debug("Got $key")
+        return key
+    }
+
 
     override fun delete(uri: URI): Boolean {
-        val objectName = uri.path.substringAfterLast("/").trim()
-        val key = "$PREFIX/$objectName"
+        val key = makeKey(uri)
         LOG.info("Deleting $key from gcp bucket")
         val blobId: BlobId = BlobId.of(config.bucket, key)
         return storage.delete(blobId)
@@ -63,7 +66,7 @@ class GCStorageStorageService(
 
     override fun deleteList(uriList: List<URI>): Boolean {
         val batchId = uriList.map {
-            BlobId.of(config.bucket, "$PREFIX/${it.path.substringAfterLast("/").trim()}")
+            BlobId.of(config.bucket, makeKey(it))
         }
         return storage.delete(batchId)[0]
     }
