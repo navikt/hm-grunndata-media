@@ -6,11 +6,16 @@ import io.micronaut.http.multipart.CompletedFileUpload
 import no.nav.hm.grunndata.media.sync.UknownMediaSource
 import no.nav.hm.grunndata.rapid.dto.MediaDTO
 import no.nav.hm.grunndata.rapid.dto.MediaType
+import org.slf4j.LoggerFactory
 import java.net.URI
 import java.util.*
 
 @Controller("/api/v1/media")
 class UploadMediaController(private val storageService: StorageService) {
+
+    companion object {
+        private val LOG = LoggerFactory.getLogger(UploadMediaController::class.java)
+    }
 
     @Post(
         value = "/files/{oid}",
@@ -18,10 +23,11 @@ class UploadMediaController(private val storageService: StorageService) {
         produces = [io.micronaut.http.MediaType.TEXT_PLAIN]
     )
     fun uploadFile(oid: UUID, file: CompletedFileUpload): MediaDTO {
+        LOG.info("Got file ${file.filename} with size: ${file.size}")
         val type = getMediaType(file)
         if (type == MediaType.OTHER) throw UknownMediaSource("only png, jpg, pdf is supported")
-        val response = storageService.uploadFile(file, URI(file.name))
-        return MediaDTO(oid = oid, sourceUri = file.name, uri = response.key, type = type)
+        val response = storageService.uploadFile(file, URI(file.filename))
+        return MediaDTO(oid = oid, sourceUri = file.filename, uri = response.key, type = type)
     }
 
     private fun getMediaType(file: CompletedFileUpload): MediaType {
@@ -35,4 +41,4 @@ class UploadMediaController(private val storageService: StorageService) {
 }
 
 val CompletedFileUpload.extension: String
-    get() = name.substringAfterLast('.', "")
+    get() = filename.substringAfterLast('.', "")
