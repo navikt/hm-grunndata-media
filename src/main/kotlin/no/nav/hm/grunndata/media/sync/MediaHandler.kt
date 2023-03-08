@@ -16,8 +16,7 @@ import javax.transaction.Transactional
 @Singleton
 open class MediaHandler(
     private val mediaRepository: MediaRepository,
-    private val storageService: StorageService,
-    @Value("\${media.source.hmdb.url}") private val hmdbMediaUrl: String
+    private val storageService: StorageService
 ) {
 
 
