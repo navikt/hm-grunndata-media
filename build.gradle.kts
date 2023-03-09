@@ -44,6 +44,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
 
+    // security
+    implementation("io.micronaut.security:micronaut-security-jwt")
+    kapt("io.micronaut.security:micronaut-security-annotations")
+    
     // micronaut-data
     implementation("io.micronaut.data:micronaut-data-jdbc")
     implementation("jakarta.persistence:jakarta.persistence-api:$jakartaPersistenceVersion")
