@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory
 import java.net.URI
 import java.util.*
 
-@Secured(Roles.ROLE_ADMIN)
+@Secured(value = [Roles.ROLE_ADMIN, Roles.ROLE_SUPPLIER])
 @Controller(V1_UPLOAD_MEDIA)
 class UploadMediaController(
     private val storageService: StorageService,
