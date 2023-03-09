@@ -1,6 +1,5 @@
 package no.nav.hm.grunndata.media.sync
 
-import io.micronaut.context.annotation.Value
 import jakarta.inject.Singleton
 import no.nav.hm.grunndata.media.model.Media
 import no.nav.hm.grunndata.media.model.MediaRepository
@@ -43,7 +42,7 @@ open class MediaHandler(
                 mediaRepository.save(
                     Media(
                         uri = it.uri, oid = oid, size = upload.size, type = it.type, sourceUri = it.sourceUri,
-                        priority = it.priority, source = it.source, text = it.text, md5 = upload.md5hash
+                        source = it.source, md5 = upload.md5hash
                     )
                 )
             } catch (e: Exception) {
@@ -51,7 +50,7 @@ open class MediaHandler(
                 mediaRepository.save(
                     Media(
                         uri = it.uri, oid = oid, size = 0, type = it.type, status = MediaStatus.ERROR,
-                        priority = it.priority, source = it.source, text = it.text, md5 = "", sourceUri = it.sourceUri
+                        source = it.source, md5 = "", sourceUri = it.sourceUri
                     )
                 )
             }

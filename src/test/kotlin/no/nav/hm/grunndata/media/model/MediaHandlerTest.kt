@@ -26,8 +26,6 @@ class MediaSyncRiverTest(private val mediaRepository: MediaRepository) {
             val media1 = Media(
                 uri = "1.jpg",
                 oid = oid,
-                priority = 1,
-                text = "bilde 1",
                 size = 1,
                 md5 = "1",
                 sourceUri = "1.jpg"
@@ -35,8 +33,6 @@ class MediaSyncRiverTest(private val mediaRepository: MediaRepository) {
             val media2 = Media(
                 uri = "2.jpg",
                 oid = oid,
-                priority = 2,
-                text = "bilde 2",
                 size = 2,
                 md5 = "2",
                 sourceUri = "2.jpg"
@@ -44,8 +40,6 @@ class MediaSyncRiverTest(private val mediaRepository: MediaRepository) {
             val media3 = Media(
                 uri = "3.jpg",
                 oid = oid,
-                priority = 3,
-                text = "bilde 3",
                 size = 3,
                 md5 = "3",
                 sourceUri = "3.jpg"

@@ -1,14 +1,14 @@
 package no.nav.hm.grunndata.media.storage
 
-import com.google.rpc.BadRequest
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.multipart.CompletedFileUpload
-import kotlinx.coroutines.runBlocking
+import io.micronaut.security.annotation.Secured
 import no.nav.hm.grunndata.media.model.Media
 import no.nav.hm.grunndata.media.model.MediaRepository
 import no.nav.hm.grunndata.media.model.MediaStatus
 import no.nav.hm.grunndata.media.model.toDTO
+import no.nav.hm.grunndata.media.storage.UploadMediaController.Companion.V1_UPLOAD_MEDIA
 import no.nav.hm.grunndata.media.sync.BadRequestException
 import no.nav.hm.grunndata.media.sync.UknownMediaSource
 import no.nav.hm.grunndata.rapid.dto.MediaDTO
@@ -18,31 +18,41 @@ import org.slf4j.LoggerFactory
 import java.net.URI
 import java.util.*
 
-@Controller("/api/v1/media")
-class UploadMediaController(private val storageService: StorageService,
-                            private val mediaRepository: MediaRepository) {
+@Secured(Roles.ROLE_ADMIN)
+@Controller(V1_UPLOAD_MEDIA)
+class UploadMediaController(
+    private val storageService: StorageService,
+    private val mediaRepository: MediaRepository
+) {
 
     companion object {
+        const val V1_UPLOAD_MEDIA = "/v1/files"
         private val LOG = LoggerFactory.getLogger(UploadMediaController::class.java)
     }
 
     @Post(
-        value = "/files/{oid}/{uri}",
+        value = "/{oid}",
         consumes = [io.micronaut.http.MediaType.MULTIPART_FORM_DATA],
         produces = [io.micronaut.http.MediaType.TEXT_PLAIN]
     )
-    fun uploadFile(oid: UUID, uri: String, file: CompletedFileUpload): MediaDTO {
-        LOG.info("Got file ${file.filename} with uri: $uri and size: ${file.size}")
+    suspend fun uploadFile(supplierId: UUID, oid: UUID, uri: String, file: CompletedFileUpload): MediaDTO {
+        LOG.info("Got file ${file.filename} with uri: $uri and size: ${file.size} for $oid from $supplierId")
         val type = getMediaType(file)
         if (type == MediaType.OTHER) throw UknownMediaSource("only png, jpg, pdf is supported")
-        return runBlocking {
-            if (mediaRepository.findByUri(uri) != null) throw BadRequestException("Duplicate, media already exist")
-            val response = storageService.uploadFile(file, URI(uri))
-            mediaRepository.save(
-                Media(oid = oid, sourceUri = uri, uri = uri, type = type, size = response.size, status = MediaStatus.ACTIVE,
-                    md5 = response.md5hash, source = MediaSourceType.REGISTER) // should only come from register
-            ).toDTO()
-        }
+        if (mediaRepository.findByUri(uri) != null) throw BadRequestException("Duplicate, media already exist")
+        val response = storageService.uploadFile(file, URI(uri))
+        return mediaRepository.save(
+            Media(
+                oid = oid,
+                sourceUri = uri,
+                uri = uri,
+                type = type,
+                size = response.size,
+                status = MediaStatus.ACTIVE,
+                md5 = response.md5hash,
+                source = MediaSourceType.REGISTER // should only come from register
+            )
+        ).toDTO()
     }
 
     private fun getMediaType(file: CompletedFileUpload): MediaType {
@@ -57,3 +67,8 @@ class UploadMediaController(private val storageService: StorageService,
 
 val CompletedFileUpload.extension: String
     get() = filename.substringAfterLast('.', "")
+
+object Roles {
+    const val ROLE_ADMIN = "ROLE_ADMIN"
+    const val ROLE_SUPPLIER = "ROLE_SUPPLIER"
+}
