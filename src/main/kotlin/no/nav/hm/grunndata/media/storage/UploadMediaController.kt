@@ -9,7 +9,6 @@ import no.nav.hm.grunndata.media.model.MediaRepository
 import no.nav.hm.grunndata.media.model.MediaStatus
 import no.nav.hm.grunndata.media.model.toDTO
 import no.nav.hm.grunndata.media.storage.UploadMediaController.Companion.V1_UPLOAD_MEDIA
-import no.nav.hm.grunndata.media.sync.BadRequestException
 import no.nav.hm.grunndata.media.sync.UknownMediaSource
 import no.nav.hm.grunndata.rapid.dto.MediaDTO
 import no.nav.hm.grunndata.rapid.dto.MediaSourceType
@@ -35,11 +34,13 @@ class UploadMediaController(
         consumes = [io.micronaut.http.MediaType.MULTIPART_FORM_DATA],
         produces = [io.micronaut.http.MediaType.TEXT_PLAIN]
     )
-    suspend fun uploadFile(supplierId: UUID, oid: UUID, uri: String, file: CompletedFileUpload): MediaDTO {
-        LOG.info("Got file ${file.filename} with uri: $uri and size: ${file.size} for $oid from $supplierId")
+    suspend fun uploadFile(oid: UUID, file: CompletedFileUpload): MediaDTO {
         val type = getMediaType(file)
         if (type == MediaType.OTHER) throw UknownMediaSource("only png, jpg, pdf is supported")
-        if (mediaRepository.findByUri(uri) != null) throw BadRequestException("Duplicate, media already exist")
+
+        val uri = "${oid}_${UUID.randomUUID()}.${file.extension}"
+        LOG.info("Got file ${file.filename} with uri: $uri and size: ${file.size} for $oid")
+
         val response = storageService.uploadFile(file, URI(uri))
         return mediaRepository.save(
             Media(
