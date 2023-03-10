@@ -1,6 +1,7 @@
 package no.nav.hm.grunndata.media.model
 
 import io.kotest.common.runBlocking
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.micronaut.test.annotation.MockBean
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
@@ -51,8 +52,9 @@ class AllowReuseOfMediaTest(private val mediaRepository: MediaRepository) {
                 md5 = "3",
                 sourceUri = "3.jpg"
             )
-            mediaRepository.saveAll(listOf(media1, media2, media3))
-            val inDbList1 = mediaRepository.findByMediaIdOid(oid)
+            val inDbList1 =
+                listOf(mediaRepository.save(media1), mediaRepository.save(media2), mediaRepository.save(media3))
+
             inDbList1.size shouldBe 3
 
             val dtoList = listOf(
@@ -61,7 +63,11 @@ class AllowReuseOfMediaTest(private val mediaRepository: MediaRepository) {
                 MediaDTO(uri = "5.jpg", oid = oid2, priority = 5, text = "bilde 5", sourceUri = "5.jpg")
             )
             val inDbList2 = mediaRepository.findByMediaIdOid(oid2)
+            inDbList2.size shouldBe 0
             mediaHandler.compareAndPersistMedia(dtoList, inDbList2, oid2)
+            mediaRepository.findById(MediaId(oid2, "1.jpg")).shouldNotBeNull()
+            mediaRepository.findByMediaIdOid(oid2).size shouldBe 3
+            mediaRepository.findByMediaIdUri("1.jpg").size shouldBe 2
 
         }
     }

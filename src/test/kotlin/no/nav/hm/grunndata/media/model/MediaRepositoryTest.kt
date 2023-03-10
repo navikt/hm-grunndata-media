@@ -18,7 +18,7 @@ class MediaRepositoryTest(private val mediaRepository: MediaRepository) {
         runBlocking {
             val saved = mediaRepository.save(media)
             saved.shouldNotBeNull()
-            val inDb = mediaRepository.findByMediaIdUri(uri)
+            val inDb = mediaRepository.findById(MediaId(oid, uri))
             inDb.shouldNotBeNull()
             inDb.status shouldBe MediaStatus.ACTIVE
             inDb.size shouldBe 12345

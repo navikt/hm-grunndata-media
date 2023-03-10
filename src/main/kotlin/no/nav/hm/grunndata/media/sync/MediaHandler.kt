@@ -39,7 +39,13 @@ open class MediaHandler(
             // upload and save
             try {
                 mediaRepository.findOneByMediaIdUri(it.uri)?.let { m ->
-                    LOG.info("this media uri: ${m.mediaId.uri} already exist and used by ${m.mediaId}")
+                    LOG.info("Skip upload for this media uri: ${m.mediaId.uri}, cause already exist and used by ${m.mediaId}")
+                    mediaRepository.save(
+                        Media(
+                            mediaId = MediaId(oid = it.oid, uri = it.uri),
+                            size = m.size, type = m.type, sourceUri = m.sourceUri, source = m.source, md5 = m.md5
+                        )
+                    )
                 } ?: run {
                     LOG.info("Uploading ${it.uri}")
                     val upload =
