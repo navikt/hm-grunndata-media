@@ -21,7 +21,7 @@ class MediaSyncRiver(
 ) : River.PacketListener {
 
     companion object {
-        private val LOG = LoggerFactory.getLogger(AgreementMediaSyncRiver::class.java)
+        private val LOG = LoggerFactory.getLogger(MediaSyncRiver::class.java)
     }
 
     init {

@@ -25,9 +25,14 @@ class GCStorageStorageService(
         private val LOG = LoggerFactory.getLogger(GCStorageStorageService::class.java)
     }
 
+    init {
+        LOG.info("GCS Storage enabled is ${mediaConfig.enabled}")
+    }
+
     override fun uploadStream(sourceUri: URI, destinationUri: URI): StorageResponse {
         return if (mediaConfig.enabled) {
             val key = makeKey(destinationUri)
+            LOG.info("Uploading ${key}")
             val blobId: BlobId = BlobId.of(config.bucket, key)
             val blobInfo = BlobInfo.newBuilder(blobId).build()
             sourceUri.toURL().openStream().use {

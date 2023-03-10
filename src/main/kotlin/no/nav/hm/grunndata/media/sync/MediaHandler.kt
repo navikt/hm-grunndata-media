@@ -47,7 +47,6 @@ open class MediaHandler(
                         )
                     )
                 } ?: run {
-                    LOG.info("Uploading ${it.uri}")
                     val upload =
                         storageService.uploadStream(sourceUri = URI(it.sourceUri), destinationUri = URI(it.uri))
                     mediaRepository.save(
