@@ -14,6 +14,8 @@ interface MediaRepository : CoroutinePageableCrudRepository<Media, MediaId>,
     suspend fun findByMediaIdUri(uri: String): Media?
     suspend fun findByMediaIdOid(oid: UUID): List<Media>
 
+    suspend fun findOneByMediaIdUri(uri: String): Media?
+
     suspend fun findByStatusAndUpdatedBefore(status: MediaStatus, updated: LocalDateTime): List<Media>
 
 }

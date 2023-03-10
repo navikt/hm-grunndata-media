@@ -47,7 +47,7 @@ class MediaSyncRiver(
             val mediaStateList = mediaRepository.findByMediaIdOid(dto.id).sortedBy { it.updated }
             val dtoMediaList = dto.media
             if (mediaStateList.isEmpty() || createdTime.isAfter(mediaStateList.last().updated)) {
-                mediaHandler.compareAndPersistMedia(dtoMediaList, mediaStateList, dto.id, dto)
+                mediaHandler.compareAndPersistMedia(dtoMediaList, mediaStateList, dto.id)
             } else {
                 LOG.info("Skip this event cause eventTime: $createdTime is older than ${mediaStateList.last().updated}")
             }

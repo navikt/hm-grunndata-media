@@ -46,9 +46,9 @@ class AgreementMediaSyncRiver(
         val dto = objectMapper.treeToValue(packet["payload"], AgreementDTO::class.java)
         LOG.info("Got eventId: $eventId for agreement ${dto.id}")
         runBlocking {
-            val mediaStateList = mediaRepository.findByMediaIdOid(dto.id)
+            val inDbList = mediaRepository.findByMediaIdOid(dto.id)
             val dtoMediaList = dto.attachments.flatMap { it.media }
-            mediaHandler.compareAndPersistMedia(dtoMediaList, mediaStateList, dto.id, dto)
+            mediaHandler.compareAndPersistMedia(dtoMediaList, inDbList, dto.id)
         }
     }
 

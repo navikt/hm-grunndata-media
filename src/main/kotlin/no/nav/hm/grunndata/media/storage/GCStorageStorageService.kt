@@ -45,7 +45,6 @@ class GCStorageStorageService(
 
     override fun uploadFile(file: CompletedFileUpload, destinationUri: URI): StorageResponse {
         val key = makeKey(destinationUri)
-        LOG.info("uploading $key")
         val response = gcsOperations.upload(UploadRequest.fromCompletedFileUpload(file, key)).nativeResponse
         return StorageResponse(etag = response.etag, key = key, size = response.size, md5hash = response.md5ToHexString)
     }

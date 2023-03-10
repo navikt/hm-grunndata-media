@@ -27,29 +27,34 @@ open class MediaHandler(
     @Transactional
     open suspend fun compareAndPersistMedia(
         dtoMediaList: List<MediaDTO>,
-        mediaStateList: List<Media>,
-        oid: UUID,
-        ownerDto: Any,
+        mediaInDbList: List<Media>,
+        oid: UUID
     ) {
-        val newMediaList = dtoMediaList.filter { m -> mediaStateList.none { m.uri == it.mediaId.uri } }
-        val notInUseList = mediaStateList.filter { n -> dtoMediaList.none { n.mediaId.uri == it.uri } }
+        val newMediaList = dtoMediaList.filter { m -> mediaInDbList.none { m.uri == it.mediaId.uri } }
+        val notInUseList = mediaInDbList.filter { n -> dtoMediaList.none { n.mediaId.uri == it.uri } }
         notInUseList.forEach {
             mediaRepository.update(it.copy(status = MediaStatus.INACTIVE, updated = LocalDateTime.now()))
         }
         newMediaList.forEach {
             // upload and save
             try {
-                val upload = storageService.uploadStream(sourceUri = URI(it.sourceUri), destinationUri = URI(it.uri))
-                mediaRepository.save(
-                    Media(
-                        mediaId = MediaId(uri = it.uri, oid = oid),
-                        size = upload.size,
-                        type = it.type,
-                        sourceUri = it.sourceUri,
-                        source = it.source,
-                        md5 = upload.md5hash
+                mediaRepository.findOneByMediaIdUri(it.uri)?.let { m ->
+                    LOG.info("this media uri: ${m.mediaId.uri} already exist and used by ${m.mediaId}")
+                } ?: run {
+                    LOG.info("Uploading ${it.uri}")
+                    val upload =
+                        storageService.uploadStream(sourceUri = URI(it.sourceUri), destinationUri = URI(it.uri))
+                    mediaRepository.save(
+                        Media(
+                            mediaId = MediaId(uri = it.uri, oid = oid),
+                            size = upload.size,
+                            type = it.type,
+                            sourceUri = it.sourceUri,
+                            source = it.source,
+                            md5 = upload.md5hash
+                        )
                     )
-                )
+                }
             } catch (e: Exception) {
                 LOG.error("Got exception while trying to upload ${it.uri} to cloud", e)
                 mediaRepository.save(
