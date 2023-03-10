@@ -4,10 +4,7 @@ import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.multipart.CompletedFileUpload
 import io.micronaut.security.annotation.Secured
-import no.nav.hm.grunndata.media.model.Media
-import no.nav.hm.grunndata.media.model.MediaRepository
-import no.nav.hm.grunndata.media.model.MediaStatus
-import no.nav.hm.grunndata.media.model.toDTO
+import no.nav.hm.grunndata.media.model.*
 import no.nav.hm.grunndata.media.storage.UploadMediaController.Companion.V1_UPLOAD_MEDIA
 import no.nav.hm.grunndata.media.sync.UknownMediaSource
 import no.nav.hm.grunndata.rapid.dto.MediaDTO
@@ -44,9 +41,8 @@ class UploadMediaController(
         val response = storageService.uploadFile(file, URI(uri))
         return mediaRepository.save(
             Media(
-                oid = oid,
+                mediaId = MediaId(oid = oid, uri = uri),
                 sourceUri = uri,
-                uri = uri,
                 type = type,
                 size = response.size,
                 status = MediaStatus.ACTIVE,

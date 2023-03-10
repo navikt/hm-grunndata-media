@@ -8,10 +8,11 @@ import java.time.LocalDateTime
 import java.util.*
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
-interface MediaRepository : CoroutinePageableCrudRepository<Media, String>, CoroutineJpaSpecificationExecutor<String> {
+interface MediaRepository : CoroutinePageableCrudRepository<Media, MediaId>,
+    CoroutineJpaSpecificationExecutor<MediaId> {
 
-    suspend fun findByUri(uri: String): Media?
-    suspend fun findByOid(oid: UUID): List<Media>
+    suspend fun findByMediaIdUri(uri: String): Media?
+    suspend fun findByMediaIdOid(oid: UUID): List<Media>
 
     suspend fun findByStatusAndUpdatedBefore(status: MediaStatus, updated: LocalDateTime): List<Media>
 

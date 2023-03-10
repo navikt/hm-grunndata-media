@@ -2,6 +2,7 @@ package no.nav.hm.grunndata.media.sync
 
 import jakarta.inject.Singleton
 import no.nav.hm.grunndata.media.model.Media
+import no.nav.hm.grunndata.media.model.MediaId
 import no.nav.hm.grunndata.media.model.MediaRepository
 import no.nav.hm.grunndata.media.model.MediaStatus
 import no.nav.hm.grunndata.media.storage.StorageService
@@ -30,8 +31,8 @@ open class MediaHandler(
         oid: UUID,
         ownerDto: Any,
     ) {
-        val newMediaList = dtoMediaList.filter { m -> mediaStateList.none { m.uri == it.uri } }
-        val notInUseList = mediaStateList.filter { n -> dtoMediaList.none { n.uri == it.uri } }
+        val newMediaList = dtoMediaList.filter { m -> mediaStateList.none { m.uri == it.mediaId.uri } }
+        val notInUseList = mediaStateList.filter { n -> dtoMediaList.none { n.mediaId.uri == it.uri } }
         notInUseList.forEach {
             mediaRepository.update(it.copy(status = MediaStatus.INACTIVE, updated = LocalDateTime.now()))
         }
@@ -41,16 +42,25 @@ open class MediaHandler(
                 val upload = storageService.uploadStream(sourceUri = URI(it.sourceUri), destinationUri = URI(it.uri))
                 mediaRepository.save(
                     Media(
-                        uri = it.uri, oid = oid, size = upload.size, type = it.type, sourceUri = it.sourceUri,
-                        source = it.source, md5 = upload.md5hash
+                        mediaId = MediaId(uri = it.uri, oid = oid),
+                        size = upload.size,
+                        type = it.type,
+                        sourceUri = it.sourceUri,
+                        source = it.source,
+                        md5 = upload.md5hash
                     )
                 )
             } catch (e: Exception) {
                 LOG.error("Got exception while trying to upload ${it.uri} to cloud", e)
                 mediaRepository.save(
                     Media(
-                        uri = it.uri, oid = oid, size = 0, type = it.type, status = MediaStatus.ERROR,
-                        source = it.source, md5 = "", sourceUri = it.sourceUri
+                        mediaId = MediaId(uri = it.uri, oid = oid),
+                        size = 0,
+                        type = it.type,
+                        status = MediaStatus.ERROR,
+                        source = it.source,
+                        md5 = "",
+                        sourceUri = it.sourceUri
                     )
                 )
             }
