@@ -1,8 +1,11 @@
 package no.nav.hm.grunndata.media.model
 
+
 import io.micronaut.data.annotation.Embeddable
 import io.micronaut.data.annotation.EmbeddedId
 import io.micronaut.data.annotation.MappedEntity
+import jakarta.persistence.Column
+
 import no.nav.hm.grunndata.rapid.dto.MediaDTO
 import no.nav.hm.grunndata.rapid.dto.MediaSourceType
 import no.nav.hm.grunndata.rapid.dto.MediaType
@@ -11,7 +14,7 @@ import java.util.*
 
 @MappedEntity("media_v1")
 data class Media(
-    @EmbeddedId
+    @field:EmbeddedId
     val mediaId: MediaId,
     val sourceUri: String,
     val type: MediaType = MediaType.IMAGE,
@@ -24,7 +27,12 @@ data class Media(
 )
 
 @Embeddable
-data class MediaId(val oid: UUID, val uri: String)
+data class MediaId(
+    @field:Column(name = "oid")
+    val oid: UUID,
+    @field:Column(name = "uri")
+    val uri: String
+)
 
 enum class MediaStatus {
     ACTIVE, INACTIVE, ERROR

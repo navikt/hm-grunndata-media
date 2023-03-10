@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 import java.util.*
 
 @MicronautTest
-class MediaSyncRiverTest(private val mediaRepository: MediaRepository) {
+class MediaHandlerTest(private val mediaRepository: MediaRepository) {
 
     @MockBean(StorageService::class)
     fun storageUpload(): StorageService = mockk(relaxed = true)
