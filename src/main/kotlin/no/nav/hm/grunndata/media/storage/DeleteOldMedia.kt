@@ -21,7 +21,7 @@ class DeleteOldMedia(
 
     fun deleteOldFiles() {
         val olderThan = LocalDateTime.now().minus(mediaStorageConfig.retention)
-        LOG.info("Deleting files that is before $olderThan and status: ${MediaStatus.INACTIVE}")
+        LOG.info("Deleting files that is older than $olderThan and status: ${MediaStatus.INACTIVE}")
         runBlocking {
             val mediaList = mediaRepository.findByStatusAndUpdatedBefore(MediaStatus.INACTIVE, olderThan)
             LOG.info("found ${mediaList.size} to be deleted")
