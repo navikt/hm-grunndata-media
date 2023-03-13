@@ -4,8 +4,6 @@ import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.multipart.CompletedFileUpload
-import io.micronaut.security.annotation.Secured
-import io.micronaut.security.authentication.Authentication
 import no.nav.hm.grunndata.media.model.*
 import no.nav.hm.grunndata.media.storage.UploadMediaController.Companion.V1_UPLOAD_MEDIA
 import no.nav.hm.grunndata.media.sync.UknownMediaSource
@@ -16,9 +14,9 @@ import org.slf4j.LoggerFactory
 import java.net.URI
 import java.util.*
 
-@Secured(value = [Roles.ROLE_ADMIN, Roles.ROLE_SUPPLIER])
 @Controller(V1_UPLOAD_MEDIA)
-class UploadMediaController(private val storageService: StorageService, private val mediaRepository: MediaRepository) {
+class UploadMediaController(private val storageService: StorageService,
+                            private val mediaRepository: MediaRepository) {
 
     companion object {
         const val V1_UPLOAD_MEDIA = "/v1/files"
@@ -26,41 +24,32 @@ class UploadMediaController(private val storageService: StorageService, private 
     }
 
     @Post(
-        value = "/{supplierId}/{oid}",
+        value = "/{oid}",
         consumes = [io.micronaut.http.MediaType.MULTIPART_FORM_DATA],
         produces = [io.micronaut.http.MediaType.TEXT_PLAIN]
     )
-    suspend fun uploadFile(supplierId: UUID,
-                           oid: UUID,
-                           file: CompletedFileUpload,
-                           authentication: Authentication): HttpResponse<MediaDTO> {
-        if (authentication.roles.contains(Roles.ROLE_ADMIN)
-                || authentication.roles.contains(Roles.ROLE_SUPPLIER)
-                && supplierId == authentication.attributes["SUPPLIER_ID"] as UUID) {
-            val type = getMediaType(file)
-            if (type == MediaType.OTHER) throw UknownMediaSource("only png, jpg, pdf is supported")
+    suspend fun uploadFile(oid: UUID,
+                           file: CompletedFileUpload): HttpResponse<MediaDTO> {
+        val type = getMediaType(file)
+        if (type == MediaType.OTHER) throw UknownMediaSource("only png, jpg, pdf is supported")
 
-            val uri = "${oid}_${UUID.randomUUID()}.${file.extension}"
-            LOG.info("Got file ${file.filename} with uri: $uri and size: ${file.size} for $oid")
+        val uri = "${oid}_${UUID.randomUUID()}.${file.extension}"
+        LOG.info("Got file ${file.filename} with uri: $uri and size: ${file.size} for $oid")
 
-            val response = storageService.uploadFile(file, URI(uri))
-            return HttpResponse.created(
-                mediaRepository.save(
-                    Media(
-                        mediaId = MediaId(oid = oid, uri = uri),
-                        sourceUri = uri,
-                        type = type,
-                        size = response.size,
-                        status = MediaStatus.ACTIVE,
-                        md5 = response.md5hash,
-                        source = MediaSourceType.REGISTER // should only come from register
-                    )
-                ).toDTO()
-            )
-        } else {
-            LOG.error("User is unauthorized ${authentication.roles}")
-            return HttpResponse.unauthorized()
-        }
+        val response = storageService.uploadFile(file, URI(uri))
+        return HttpResponse.created(
+            mediaRepository.save(
+                Media(
+                    mediaId = MediaId(oid = oid, uri = uri),
+                    sourceUri = uri,
+                    type = type,
+                    size = response.size,
+                    status = MediaStatus.ACTIVE,
+                    md5 = response.md5hash,
+                    source = MediaSourceType.REGISTER // should only come from register
+                )
+            ).toDTO()
+        )
     }
 
     private fun getMediaType(file: CompletedFileUpload): MediaType {
@@ -70,13 +59,7 @@ class UploadMediaController(private val storageService: StorageService, private 
             else -> MediaType.OTHER
         }
     }
-
 }
 
 val CompletedFileUpload.extension: String
     get() = filename.substringAfterLast('.', "")
-
-object Roles {
-    const val ROLE_ADMIN = "ROLE_ADMIN"
-    const val ROLE_SUPPLIER = "ROLE_SUPPLIER"
-}

@@ -2,7 +2,6 @@ micronaut:
   server:
     multipart:
       max-file-size: 2097152
-    context-path: "/media"
     port: ${SERVER_PORT:8080}
   object-storage:
     gcp:
@@ -15,21 +14,6 @@ micronaut:
     consumer:
       type: fixed
       nThreads: 1
-  security:
-    enabled: true
-    redirect:
-      enabled: false
-    endpoints:
-      login:
-        enabled: false
-    authentication: cookie
-    token:
-      jwt:
-        signatures:
-          secret:
-            generator:
-              secret: ${JWT_GENERATOR_SECRET:MustBeAVeryLongSecretAndUsedThisForTestOnly}
-              jws-algorithm: HS256
   metrics:
     enabled: true
     binders:
