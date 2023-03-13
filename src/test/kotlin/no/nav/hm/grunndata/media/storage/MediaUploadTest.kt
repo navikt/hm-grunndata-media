@@ -17,6 +17,9 @@ class MediaUploadTest(
         val sourceUri = URI("https://www.hjelpemiddeldatabasen.no/blobs/orig/54216.jpg")
         val destinationUri = URI("123_54216.jpg")
         val response = gcstorageUpload.uploadStream(sourceUri, destinationUri)
+
         println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(response))
+        // test delete
+        gcstorageUpload.delete(destinationUri)
     }
 }

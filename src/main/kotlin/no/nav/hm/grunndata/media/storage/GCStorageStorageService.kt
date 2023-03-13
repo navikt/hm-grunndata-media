@@ -26,7 +26,7 @@ class GCStorageStorageService(
     }
 
     init {
-        LOG.info("GCS Storage enabled is ${mediaConfig.enabled}")
+        LOG.info("GCS Storage enabled is ${mediaConfig.enabled} and using bucket ${config.bucket}")
     }
 
     override fun uploadStream(sourceUri: URI, destinationUri: URI): StorageResponse {
