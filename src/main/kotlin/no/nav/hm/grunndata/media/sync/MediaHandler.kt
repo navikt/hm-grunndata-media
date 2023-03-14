@@ -32,6 +32,7 @@ open class MediaHandler(
     ) {
         val newMediaList = dtoMediaList.filter { m -> mediaInDbList.none { m.uri == it.mediaId.uri } }
         val notInUseList = mediaInDbList.filter { n -> dtoMediaList.none { n.mediaId.uri == it.uri } }
+        LOG.info("Got ${newMediaList.size} new files and ${notInUseList.size} files to be deactivated")
         notInUseList.forEach {
             mediaRepository.update(it.copy(status = MediaStatus.INACTIVE, updated = LocalDateTime.now()))
         }
@@ -39,7 +40,10 @@ open class MediaHandler(
             // upload and save
             try {
                 mediaRepository.findOneByMediaIdUri(it.uri)?.let { m ->
-                    LOG.info("Skip upload for this media uri: ${m.mediaId.uri}, cause already exist and used by ${m.mediaId}")
+                    LOG.debug(
+                        """Allowing reuse media, skip upload for this media uri: ${m.mediaId.uri},
+                            |cause already exist and used by ${m.mediaId}""".trimMargin()
+                    )
                     mediaRepository.save(
                         Media(
                             mediaId = MediaId(oid = it.oid, uri = it.uri),

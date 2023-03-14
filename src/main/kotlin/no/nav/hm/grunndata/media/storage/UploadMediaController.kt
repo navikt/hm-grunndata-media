@@ -19,7 +19,7 @@ class UploadMediaController(private val storageService: StorageService,
                             private val mediaRepository: MediaRepository) {
 
     companion object {
-        const val V1_UPLOAD_MEDIA = "/v1/files"
+        const val V1_UPLOAD_MEDIA = "/api/v1/media/files"
         private val LOG = LoggerFactory.getLogger(UploadMediaController::class.java)
     }
 
