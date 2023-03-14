@@ -39,6 +39,7 @@ enum class MediaStatus {
 }
 
 fun Media.toDTO(): MediaDTO = MediaDTO(
+    oid = mediaId.oid,
     uri = mediaId.uri,
     sourceUri = sourceUri,
     source = source,
