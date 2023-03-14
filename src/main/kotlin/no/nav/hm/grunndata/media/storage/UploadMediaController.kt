@@ -33,7 +33,7 @@ class UploadMediaController(private val storageService: StorageService,
         val type = getMediaType(file)
         if (type == MediaType.OTHER) throw UknownMediaSource("only png, jpg, pdf is supported")
 
-        val uri = "${oid}_${UUID.randomUUID()}.${file.extension}"
+        val uri = "${oid}/${UUID.randomUUID()}.${file.extension}"
         LOG.info("Got file ${file.filename} with uri: $uri and size: ${file.size} for $oid")
 
         val response = storageService.uploadFile(file, URI(uri))

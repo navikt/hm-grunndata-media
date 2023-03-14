@@ -55,7 +55,7 @@ class GCStorageStorageService(
     }
 
     private fun makeKey(destinationUri: URI): String {
-        val objectName = destinationUri.path.substringAfterLast("/").trim()
+        val objectName = destinationUri.path
         val key = "$PREFIX/$objectName"
         LOG.debug("Got $key")
         return key
