@@ -13,9 +13,9 @@ class MediaUploadTest(
 
     //@Test //use for testing gcp buckets
     fun testUploadDownload() {
-        val resource = MediaUploadTest::class.java.classLoader.getResource("54216.jpg")
-        val sourceUri = URI("https://www.hjelpemiddeldatabasen.no/blobs/orig/54216.jpg")
-        val destinationUri = URI("123_54216.jpg")
+        val resource = MediaUploadTest::class.java.classLoader.getResource("66131.jpg")
+        val sourceUri = URI("https://www.hjelpemiddeldatabasen.no/blobs/orig/66131.jpg")
+        val destinationUri = URI("123_66131.jpg")
         val response = gcstorageUpload.uploadStream(sourceUri, destinationUri)
 
         println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(response))

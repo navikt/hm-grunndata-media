@@ -4,12 +4,16 @@ import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.multipart.CompletedFileUpload
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.reactive.asFlow
 import no.nav.hm.grunndata.media.model.*
 import no.nav.hm.grunndata.media.storage.UploadMediaController.Companion.V1_UPLOAD_MEDIA
 import no.nav.hm.grunndata.media.sync.UknownMediaSource
 import no.nav.hm.grunndata.rapid.dto.MediaDTO
 import no.nav.hm.grunndata.rapid.dto.MediaSourceType
 import no.nav.hm.grunndata.rapid.dto.MediaType
+import org.reactivestreams.Publisher
 import org.slf4j.LoggerFactory
 import java.net.URI
 import java.util.*
@@ -19,17 +23,22 @@ class UploadMediaController(private val storageService: StorageService,
                             private val mediaRepository: MediaRepository) {
 
     companion object {
-        const val V1_UPLOAD_MEDIA = "/api/v1/media/files"
+        const val V1_UPLOAD_MEDIA = "/api/v1/media"
         private val LOG = LoggerFactory.getLogger(UploadMediaController::class.java)
     }
 
     @Post(
-        value = "/{oid}",
+        value = "/file/{oid}",
         consumes = [io.micronaut.http.MediaType.MULTIPART_FORM_DATA],
         produces = [io.micronaut.http.MediaType.APPLICATION_JSON]
     )
     suspend fun uploadFile(oid: UUID,
                            file: CompletedFileUpload): HttpResponse<MediaDTO> {
+        return uploadToGCS(file, oid)
+    }
+
+    private suspend fun uploadToGCS(file: CompletedFileUpload,
+                                    oid: UUID): HttpResponse<MediaDTO> {
         val type = getMediaType(file)
         if (type == MediaType.OTHER) throw UknownMediaSource("only png, jpg, pdf is supported")
 
@@ -50,6 +59,18 @@ class UploadMediaController(private val storageService: StorageService,
                 )
             ).toDTO()
         )
+    }
+
+    @Post(
+        value = "/files/{oid}",
+        consumes = [io.micronaut.http.MediaType.MULTIPART_FORM_DATA],
+        produces = [io.micronaut.http.MediaType.APPLICATION_JSON]
+    )
+    suspend fun uploadFiles(oid: UUID,
+                            files: Publisher<CompletedFileUpload>) {
+        files.asFlow().onEach {
+            uploadToGCS(it, oid)
+        }.collect()
     }
 
     private fun getMediaType(file: CompletedFileUpload): MediaType {
