@@ -1,11 +1,9 @@
 package no.nav.hm.grunndata.media.storage
 
-import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.multipart.CompletedFileUpload
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.reactive.asFlow
 import no.nav.hm.grunndata.media.model.*
 import no.nav.hm.grunndata.media.storage.UploadMediaController.Companion.V1_UPLOAD_MEDIA
@@ -33,12 +31,12 @@ class UploadMediaController(private val storageService: StorageService,
         produces = [io.micronaut.http.MediaType.APPLICATION_JSON]
     )
     suspend fun uploadFile(oid: UUID,
-                           file: CompletedFileUpload): HttpResponse<MediaDTO> {
+                           file: CompletedFileUpload): MediaDTO {
         return uploadToGCS(file, oid)
     }
 
     private suspend fun uploadToGCS(file: CompletedFileUpload,
-                                    oid: UUID): HttpResponse<MediaDTO> {
+                                    oid: UUID): MediaDTO {
         val type = getMediaType(file)
         if (type == MediaType.OTHER) throw UknownMediaSource("only png, jpg, pdf is supported")
 
@@ -46,19 +44,17 @@ class UploadMediaController(private val storageService: StorageService,
         LOG.info("Got file ${file.filename} with uri: $uri and size: ${file.size} for $oid")
 
         val response = storageService.uploadFile(file, URI(uri))
-        return HttpResponse.created(
-            mediaRepository.save(
-                Media(
-                    mediaId = MediaId(oid = oid, uri = uri),
-                    sourceUri = uri,
-                    type = type,
-                    size = response.size,
-                    status = MediaStatus.ACTIVE,
-                    md5 = response.md5hash,
-                    source = MediaSourceType.REGISTER // should only come from register
-                )
-            ).toDTO()
-        )
+        return mediaRepository.save(
+            Media(
+                mediaId = MediaId(oid = oid, uri = uri),
+                sourceUri = uri,
+                type = type,
+                size = response.size,
+                status = MediaStatus.ACTIVE,
+                md5 = response.md5hash,
+                source = MediaSourceType.REGISTER // should only come from register
+            )
+        ).toDTO()
     }
 
     @Post(
@@ -67,11 +63,9 @@ class UploadMediaController(private val storageService: StorageService,
         produces = [io.micronaut.http.MediaType.APPLICATION_JSON]
     )
     suspend fun uploadFiles(oid: UUID,
-                            files: Publisher<CompletedFileUpload>) {
-        files.asFlow().onEach {
-            uploadToGCS(it, oid)
-        }.collect()
-    }
+                            files: Publisher<CompletedFileUpload>): List<MediaDTO> =
+        files.asFlow().map { uploadToGCS(it, oid) }.toList()
+    
 
     private fun getMediaType(file: CompletedFileUpload): MediaType {
         return when (file.extension.lowercase()) {
