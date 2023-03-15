@@ -41,8 +41,7 @@ open class MediaHandler(
             try {
                 mediaRepository.findOneByMediaIdUri(it.uri)?.let { m ->
                     LOG.debug(
-                        """Allowing reuse media, skip upload for this media uri: ${m.mediaId.uri},
-                            |cause already exist and used by ${m.mediaId}""".trimMargin()
+                        """Allowing reuse media, skip upload for this media uri: ${m.mediaId.uri}"""
                     )
                     mediaRepository.save(
                         Media(

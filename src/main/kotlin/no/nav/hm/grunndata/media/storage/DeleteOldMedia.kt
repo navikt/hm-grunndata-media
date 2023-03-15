@@ -25,8 +25,16 @@ class DeleteOldMedia(
         runBlocking {
             val mediaList = mediaRepository.findByStatusAndUpdatedBefore(MediaStatus.INACTIVE, olderThan)
             LOG.info("found ${mediaList.size} to be deleted")
-            storageService.deleteList(mediaList.map { URI(it.mediaId.uri) })
-            mediaRepository.deleteAll(mediaList)
+            mediaList.forEach { media ->
+                mediaRepository.findOneByMediaIdUriAndStatus(media.mediaId.uri, MediaStatus.ACTIVE)?.let {
+                    LOG.debug("used by at another object, skip deleting media file")
+                } ?: run {
+                    LOG.info("Deleting file from storage: ${media.mediaId.uri}")
+                    storageService.delete(URI(media.mediaId.uri))
+                }
+                mediaRepository.delete(media)
+            }
+
         }
     }
 }

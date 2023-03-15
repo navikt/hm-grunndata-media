@@ -59,6 +59,7 @@ class DeleteOldMediaTest(
                 sourceUri = "3.jpg"
             )
             mediaRepository.save(media3)
+
             mediaRepository.update(
                 media3.copy(
                     updated = LocalDateTime.now().minusDays(100),
