@@ -21,6 +21,7 @@ class DeleteOldMediaTest(
 ) {
 
     val oid = UUID.randomUUID()
+    val oid2 = UUID.randomUUID()
 
     @MockBean(StorageService::class)
     fun storageService(): StorageService = mockk(relaxed = true)
@@ -31,7 +32,7 @@ class DeleteOldMediaTest(
 
             val media1 = Media(
                 mediaId = MediaId(
-                    uri = "123.jpg",
+                    uri = "$oid/123.jpg",
                     oid = oid
                 ),
                 size = 1,
@@ -41,7 +42,7 @@ class DeleteOldMediaTest(
             mediaRepository.save(media1)
             val media2 = Media(
                 mediaId = MediaId(
-                    uri = "124.jpg",
+                    uri = "$oid/124.jpg",
                     oid = oid
                 ),
                 size = 2,
@@ -51,7 +52,7 @@ class DeleteOldMediaTest(
             mediaRepository.save(media2)
             val media3 = Media(
                 mediaId = MediaId(
-                    uri = "125.jpg",
+                    uri = "$oid/125.jpg",
                     oid = oid
                 ),
                 size = 3,
@@ -59,6 +60,17 @@ class DeleteOldMediaTest(
                 sourceUri = "3.jpg"
             )
             mediaRepository.save(media3)
+
+            val media4 = Media(
+                mediaId = MediaId(
+                    uri = "$oid/125.jpg",
+                    oid = oid2
+                ),
+                size = 3,
+                md5 = "3",
+                sourceUri = "3.jpg"
+            )
+            mediaRepository.save(media4)
 
             mediaRepository.update(
                 media3.copy(
@@ -74,6 +86,7 @@ class DeleteOldMediaTest(
         deleteOldMedia.deleteOldFiles()
         runBlocking {
             mediaRepository.findByMediaIdOid(oid).size shouldBe 2
+            mediaRepository.findByMediaIdOid(oid2).size shouldBe 1
         }
     }
 }
