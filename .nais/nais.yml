@@ -9,10 +9,10 @@ spec:
   image: {{image}}
   port: 8080
   liveness:
-    path: /media/internal/isAlive
+    path: /internal/isAlive
     initialDelay: 20
   readiness:
-    path: /media/internal/isReady
+    path: /internal/isReady
     initialDelay: 20
   replicas:
     min: {{min_replicas}}

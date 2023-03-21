@@ -49,7 +49,7 @@ class MediaSyncRiver(
             if (mediaStateList.isEmpty() || createdTime.isAfter(mediaStateList.last().updated)) {
                 mediaHandler.compareAndPersistMedia(dtoMediaList, mediaStateList, dto.id)
             } else {
-                LOG.info("Skip this event cause eventTime: $createdTime is older than ${mediaStateList.last().updated}")
+                LOG.info("Skip this event cause event created time : $createdTime is older than ${mediaStateList.last().updated}")
             }
         }
     }
