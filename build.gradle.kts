@@ -15,7 +15,7 @@ val mockkVersion = "1.13.2"
 val kotestVersion = "5.5.4"
 val jakartaPersistenceVersion = "3.1.0"
 val rapidsRiversVersion = "202303011052"
-val grunndataDtoVersion = "202303081356"
+val grunndataDtoVersion = "202303231418"
 
 
 group = "no.nav.hm"
@@ -24,7 +24,6 @@ version = properties["version"] ?: "local-build"
 plugins {
     kotlin("jvm") version "1.7.0"
     kotlin("kapt") version "1.7.0"
-    kotlin("plugin.allopen") version "1.7.0"
     id("java")
     id("com.github.johnrengelman.shadow") version "7.1.0"
     id("io.micronaut.application") version "3.7.2"
@@ -43,7 +42,7 @@ dependencies {
     // coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
-    
+
     // micronaut-data
     implementation("io.micronaut.data:micronaut-data-jdbc")
     implementation("jakarta.persistence:jakarta.persistence-api:$jakartaPersistenceVersion")
