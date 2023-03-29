@@ -11,6 +11,7 @@ import no.nav.helse.rapids_rivers.River
 import no.nav.hm.grunndata.media.model.MediaRepository
 import no.nav.hm.grunndata.rapid.dto.AgreementDTO
 import no.nav.hm.grunndata.rapid.dto.rapidDTOVersion
+import no.nav.hm.grunndata.rapid.event.RapidApp
 import no.nav.hm.rapids_rivers.micronaut.RiverHead
 import org.slf4j.LoggerFactory
 
@@ -30,7 +31,7 @@ class AgreementMediaSyncRiver(
     init {
         LOG.info("Using Rapid DTO version $rapidDTOVersion")
         river
-            .validate { it.demandValue("createdBy", "GDB") }
+            .validate { it.demandValue("createdBy", RapidApp.grunndata_db) }
             .validate { it.demandValue("payloadType", AgreementDTO::class.java.simpleName) }
             .validate { it.demandKey("eventId") }
             .validate { it.demandKey("payload") }
