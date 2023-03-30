@@ -6,7 +6,7 @@ import no.nav.hm.grunndata.media.model.MediaId
 import no.nav.hm.grunndata.media.model.MediaRepository
 import no.nav.hm.grunndata.media.model.MediaStatus
 import no.nav.hm.grunndata.media.storage.StorageService
-import no.nav.hm.grunndata.rapid.dto.MediaDTO
+import no.nav.hm.grunndata.rapid.dto.MediaInfo
 import org.slf4j.LoggerFactory
 import java.net.URI
 import java.time.LocalDateTime
@@ -26,12 +26,12 @@ open class MediaHandler(
 
     @Transactional
     open suspend fun compareAndPersistMedia(
-        dtoMediaList: List<MediaDTO>,
+        mediaInfoList: List<MediaInfo>,
         mediaInDbList: List<Media>,
         oid: UUID
     ) {
-        val newMediaList = dtoMediaList.filter { m -> mediaInDbList.none { m.uri == it.mediaId.uri } }
-        val notInUseList = mediaInDbList.filter { n -> dtoMediaList.none { n.mediaId.uri == it.uri } }
+        val newMediaList = mediaInfoList.filter { m -> mediaInDbList.none { m.uri == it.mediaId.uri } }
+        val notInUseList = mediaInDbList.filter { n -> mediaInfoList.none { n.mediaId.uri == it.uri } }
         LOG.info("Got ${newMediaList.size} new files and ${notInUseList.size} files to be deactivated")
         notInUseList.forEach {
             mediaRepository.update(it.copy(status = MediaStatus.INACTIVE, updated = LocalDateTime.now()))
@@ -45,7 +45,7 @@ open class MediaHandler(
                     )
                     mediaRepository.save(
                         Media(
-                            mediaId = MediaId(oid = it.oid, uri = it.uri),
+                            mediaId = MediaId(oid = oid, uri = it.uri),
                             size = m.size, type = m.type, sourceUri = m.sourceUri, source = m.source, md5 = m.md5
                         )
                     )

@@ -8,7 +8,7 @@ import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import io.mockk.mockk
 import no.nav.hm.grunndata.media.storage.StorageService
 import no.nav.hm.grunndata.media.sync.MediaHandler
-import no.nav.hm.grunndata.rapid.dto.MediaDTO
+import no.nav.hm.grunndata.rapid.dto.MediaInfo
 import org.junit.jupiter.api.Test
 import java.util.*
 
@@ -57,14 +57,14 @@ class AllowReuseOfMediaTest(private val mediaRepository: MediaRepository) {
 
             inDbList1.size shouldBe 3
 
-            val dtoList = listOf(
-                MediaDTO(uri = "1.jpg", oid = oid2, priority = 4, text = "bilde 1", sourceUri = "1.jpg"),
-                MediaDTO(uri = "4.jpg", oid = oid2, priority = 4, text = "bilde 4", sourceUri = "4.jpg"),
-                MediaDTO(uri = "5.jpg", oid = oid2, priority = 5, text = "bilde 5", sourceUri = "5.jpg")
+            val mediaInfoList = listOf(
+                MediaInfo(uri = "1.jpg", priority = 4, text = "bilde 1", sourceUri = "1.jpg"),
+                MediaInfo(uri = "4.jpg", priority = 4, text = "bilde 4", sourceUri = "4.jpg"),
+                MediaInfo(uri = "5.jpg", priority = 5, text = "bilde 5", sourceUri = "5.jpg")
             )
             val inDbList2 = mediaRepository.findByMediaIdOid(oid2)
             inDbList2.size shouldBe 0
-            mediaHandler.compareAndPersistMedia(dtoList, inDbList2, oid2)
+            mediaHandler.compareAndPersistMedia(mediaInfoList, inDbList2, oid2)
             mediaRepository.findById(MediaId(oid2, "1.jpg")).shouldNotBeNull()
             mediaRepository.findByMediaIdOid(oid2).size shouldBe 3
             mediaRepository.findByMediaIdUri("1.jpg").size shouldBe 2

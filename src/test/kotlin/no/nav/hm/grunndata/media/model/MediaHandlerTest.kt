@@ -8,7 +8,7 @@ import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import io.mockk.mockk
 import no.nav.hm.grunndata.media.storage.StorageService
 import no.nav.hm.grunndata.media.sync.MediaHandler
-import no.nav.hm.grunndata.rapid.dto.MediaDTO
+import no.nav.hm.grunndata.rapid.dto.MediaInfo
 import org.junit.jupiter.api.Test
 import java.util.*
 
@@ -52,12 +52,12 @@ class MediaHandlerTest(private val mediaRepository: MediaRepository) {
             )
             val mediaList =
                 listOf(mediaRepository.save(media1), mediaRepository.save(media2), mediaRepository.save(media3))
-            val dtoList = listOf(
-                MediaDTO(uri = "1.jpg", oid = oid, priority = 4, text = "bilde 1", sourceUri = "1.jpg"),
-                MediaDTO(uri = "4.jpg", oid = oid, priority = 4, text = "bilde 4", sourceUri = "4.jpg"),
-                MediaDTO(uri = "5.jpg", oid = oid, priority = 5, text = "bilde 5", sourceUri = "5.jpg")
+            val mediaInfoList = listOf(
+                MediaInfo(uri = "1.jpg", priority = 4, text = "bilde 1", sourceUri = "1.jpg"),
+                MediaInfo(uri = "4.jpg", priority = 4, text = "bilde 4", sourceUri = "4.jpg"),
+                MediaInfo(uri = "5.jpg", priority = 5, text = "bilde 5", sourceUri = "5.jpg")
             )
-            mediaHandler.compareAndPersistMedia(dtoList, mediaList, oid)
+            mediaHandler.compareAndPersistMedia(mediaInfoList, mediaList, oid)
             val inDb = mediaRepository.findByMediaIdOid(oid)
             inDb.shouldNotBeNull()
             inDb.size shouldBe 5
