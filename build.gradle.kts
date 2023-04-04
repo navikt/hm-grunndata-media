@@ -2,20 +2,20 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val jvmTarget = "17"
-val micronautVersion = "3.8.6"
+val micronautVersion = "3.8.7"
 val kafkaVersion = "3.2.1"
 val micrometerRegistryPrometheusVersion = "1.9.1"
-val junitJupiterVersion = "5.9.0"
+val junitJupiterVersion = "5.9.2"
 val jacksonVersion = "2.13.4"
-val logbackClassicVersion = "1.4.5"
-val logbackEncoderVersion = "7.2"
-val postgresqlVersion = "42.5.1"
+val logbackClassicVersion = "1.4.6"
+val logbackEncoderVersion = "7.3"
+val postgresqlVersion = "42.5.4"
 val tcVersion = "1.17.6"
-val mockkVersion = "1.13.2"
-val kotestVersion = "5.5.4"
+val mockkVersion = "1.13.4"
+val kotestVersion = "5.5.5"
 val jakartaPersistenceVersion = "3.1.0"
 val rapidsRiversVersion = "202303011052"
-val grunndataDtoVersion = "202303301323"
+val grunndataDtoVersion = "202304031307"
 
 
 group = "no.nav.hm"
@@ -26,7 +26,7 @@ plugins {
     kotlin("kapt") version "1.7.0"
     id("java")
     id("com.github.johnrengelman.shadow") version "7.1.0"
-    id("io.micronaut.application") version "3.7.2"
+    id("io.micronaut.application") version "3.7.4"
 }
 
 configurations.all {
