@@ -6,6 +6,6 @@
   "min_replicas": 2,
   "max_replicas": 2,
   "schedulers_enabled": false,
-  "bucket_name": "hm-grunndata-media-prod",
+  "bucket_name": "frontend-plattform-prod-teamdigihot",
   "media_storage_enabled": false
 }

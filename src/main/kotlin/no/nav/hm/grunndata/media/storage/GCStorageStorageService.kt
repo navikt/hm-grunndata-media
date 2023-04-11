@@ -21,12 +21,14 @@ class GCStorageStorageService(
 ) : StorageService {
 
     companion object {
-        private const val PREFIX = "grunndata/media"
+        private const val PREFIX = "grunndata/media/v1"
         private val LOG = LoggerFactory.getLogger(GCStorageStorageService::class.java)
     }
 
     init {
-        LOG.info("GCS Storage enabled is ${mediaConfig.enabled} and using bucket ${config.bucket}")
+        LOG.info(
+            """GCS Storage enabled is ${mediaConfig.enabled}, using bucket ${config.bucket}, storing to ${PREFIX}"""
+        )
     }
 
     override fun uploadStream(sourceUri: URI, destinationUri: URI): StorageResponse {
