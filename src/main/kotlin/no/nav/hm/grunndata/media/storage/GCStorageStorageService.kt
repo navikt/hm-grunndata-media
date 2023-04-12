@@ -21,7 +21,7 @@ class GCStorageStorageService(
 ) : StorageService {
 
     companion object {
-        private const val PREFIX = "grunndata/media/v1"
+        private const val PREFIX = "teamdigihot/grunndata/media/v1"
         private val LOG = LoggerFactory.getLogger(GCStorageStorageService::class.java)
     }
 
@@ -31,12 +31,14 @@ class GCStorageStorageService(
         )
     }
 
-    override fun uploadStream(sourceUri: URI, destinationUri: URI): StorageResponse {
+    override fun uploadStream(sourceUri: URI, destinationUri: URI, contentType: String): StorageResponse {
         return if (mediaConfig.enabled) {
             val key = makeKey(destinationUri)
             LOG.info("Uploading ${key} from sourceUri $sourceUri")
             val blobId: BlobId = BlobId.of(config.bucket, key)
-            val blobInfo = BlobInfo.newBuilder(blobId).build()
+            val blobInfo = BlobInfo.newBuilder(blobId).apply {
+                setContentType(contentType)
+            }.build()
             sourceUri.toURL().openStream().use {
                 val blob = storage.createFrom(blobInfo, it)
                 StorageResponse(

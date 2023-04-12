@@ -51,7 +51,11 @@ open class MediaHandler(
                     )
                 } ?: run {
                     val upload =
-                        storageService.uploadStream(sourceUri = URI(it.sourceUri), destinationUri = URI(it.uri))
+                        storageService.uploadStream(
+                            sourceUri = URI(it.sourceUri),
+                            destinationUri = URI(it.uri),
+                            contentType = URI(it.sourceUri).getContentType()
+                        )
                     mediaRepository.save(
                         Media(
                             mediaId = MediaId(uri = it.uri, oid = oid),
@@ -80,4 +84,11 @@ open class MediaHandler(
         }
     }
 
+}
+
+fun URI.getContentType(): String = when (path.lowercase().substringAfterLast(".")) {
+    "jpg" -> "image/jpeg"
+    "png" -> "image/png"
+    "pdf" -> "application/pdf"
+    else -> "application/octet-stream"
 }
