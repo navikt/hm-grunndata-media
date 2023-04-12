@@ -2,11 +2,11 @@
   "disk_tier": "db-f1-micro",
   "disk_size": 10,
   "kafka_cluster": "nav-dev",
-  "rapidsandrivers_enabled": true,
+  "rapidsandrivers_enabled": false,
   "min_replicas": 1,
   "max_replicas": 1,
-  "schedulers_enabled": true,
+  "schedulers_enabled": false,
   "bucket_name": "frontend-plattform-dev-teamdigihot",
   "google_cloud_project": "teamdigihot-dev-9705",
-  "media_storage_enabled": true
+  "media_storage_enabled": false
 }
