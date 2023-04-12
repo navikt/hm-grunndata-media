@@ -34,7 +34,7 @@ class GCStorageStorageService(
     override fun uploadStream(sourceUri: URI, destinationUri: URI): StorageResponse {
         return if (mediaConfig.enabled) {
             val key = makeKey(destinationUri)
-            LOG.info("Uploading ${key}")
+            LOG.info("Uploading ${key} from sourceUri $sourceUri")
             val blobId: BlobId = BlobId.of(config.bucket, key)
             val blobInfo = BlobInfo.newBuilder(blobId).build()
             sourceUri.toURL().openStream().use {
