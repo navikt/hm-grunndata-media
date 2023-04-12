@@ -28,6 +28,9 @@ spec:
   prometheus:
     enabled: true
     path: /internal/prometheus
+  filesFrom:
+    - secret: hm-grunndata-media-credentials
+      mountPath: /var/run/secrets/credentials/hm-grunndata-media
   env:
     - name: DB_DRIVER
       value: "org.postgresql.Driver"
@@ -39,6 +42,10 @@ spec:
       value: "{{ bucket_name }}"
     - name: MEDIA_STORAGE_ENABLED
       value: "{{ media_storage_enabled }}"
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: "/var/run/secrets/credentials/hm-grunndata-media/secret"
+    - name: GOOGLE_CLOUD_PROJECT
+      value: "{{ google_cloud_project }}"
   gcp:
     sqlInstances:
       - name: hm-grunndata-media

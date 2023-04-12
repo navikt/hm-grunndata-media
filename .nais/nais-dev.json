@@ -7,5 +7,6 @@
   "max_replicas": 1,
   "schedulers_enabled": true,
   "bucket_name": "frontend-plattform-dev-teamdigihot",
+  "google_cloud_project": "teamdigihot-dev-9705",
   "media_storage_enabled": true
 }
