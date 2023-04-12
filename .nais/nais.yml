@@ -42,7 +42,7 @@ spec:
       value: "{{ bucket_name }}"
     - name: MEDIA_STORAGE_ENABLED
       value: "{{ media_storage_enabled }}"
-    - name: GOOGLE_APPLICATION_CREDENTIALS
+    - name: GCP_CREDENTIALS_LOCATION
       value: "/var/run/secrets/credentials/hm-grunndata-media/secret"
     - name: GOOGLE_CLOUD_PROJECT
       value: "{{ google_cloud_project }}"
