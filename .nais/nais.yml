@@ -64,6 +64,8 @@ spec:
     pool: {{kafka_cluster}}
   accessPolicy:
     outbound:
+      external:
+        - host: www.hjelpemiddeldatabasen.no
       rules:
         - application: hm-grunndata-db
     inbound:
