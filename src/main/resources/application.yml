@@ -10,10 +10,6 @@ micronaut:
   application:
     name: hm-grunndata-media
     thread-selection: auto
-  executors:
-    consumer:
-      type: fixed
-      nThreads: 1
   metrics:
     enabled: true
     binders:
