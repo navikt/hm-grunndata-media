@@ -2,11 +2,10 @@
   "disk_tier": "db-custom-1-3840",
   "disk_size": 20,
   "kafka_cluster": "nav-prod",
-  "rapidsandrivers_enabled": true,
+  "rapidsandrivers_enabled": false,
   "min_replicas": 2,
   "max_replicas": 2,
-  "schedulers_enabled": true,
+  "schedulers_enabled": false,
   "bucket_name": "frontend-plattform-prod-teamdigihot",
-  "google_cloud_project": "teamdigihot-prod-6f0d",
-  "media_storage_enabled": true
+  "media_storage_enabled": false
 }
