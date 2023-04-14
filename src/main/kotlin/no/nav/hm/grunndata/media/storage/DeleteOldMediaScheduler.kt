@@ -3,15 +3,18 @@ package no.nav.hm.grunndata.media.storage
 import io.micronaut.context.annotation.Requires
 import io.micronaut.scheduling.annotation.Scheduled
 import jakarta.inject.Singleton
+import no.nav.hm.grunndata.media.LeaderElection
 
 @Singleton
 @Requires(property = "schedulers.enabled", value = "true")
 class DeleteOldMediaScheduler(
-    private val deleteOldMedia: DeleteOldMedia
+    private val deleteOldMedia: DeleteOldMedia, private val leaderElection: LeaderElection
 ) {
 
-    @Scheduled(cron = "0 45 * * * *")
+    @Scheduled(fixedDelay = "5m")
     fun deleteOldFiles() {
-        deleteOldMedia.deleteOldFiles()
+        if (leaderElection.isLeader()) {
+            deleteOldMedia.deleteOldFiles()
+        }
     }
 }

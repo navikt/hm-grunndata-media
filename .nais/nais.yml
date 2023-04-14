@@ -28,6 +28,7 @@ spec:
   prometheus:
     enabled: true
     path: /internal/prometheus
+  leaderElection: true
   filesFrom:
     - secret: hm-grunndata-media-credentials
       mountPath: /var/run/secrets/credentials/hm-grunndata-media
