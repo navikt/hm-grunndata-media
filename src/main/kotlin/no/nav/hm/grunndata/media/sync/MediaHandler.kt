@@ -46,7 +46,8 @@ open class MediaHandler(
                     mediaRepository.save(
                         Media(
                             mediaId = MediaId(oid = oid, uri = it.uri),
-                            size = m.size, type = m.type, sourceUri = m.sourceUri, source = m.source, md5 = m.md5
+                            size = m.size, type = m.type, sourceUri = m.sourceUri, source = m.source,
+                            md5 = m.md5, status = m.status
                         )
                     )
                 } ?: run {
@@ -63,7 +64,8 @@ open class MediaHandler(
                             type = it.type,
                             sourceUri = it.sourceUri,
                             source = it.source,
-                            md5 = upload.md5hash
+                            md5 = upload.md5hash,
+                            status = MediaStatus.ACTIVE,
                         )
                     )
                 }
