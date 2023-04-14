@@ -34,7 +34,8 @@ open class MediaHandler(
         val notInUseList = mediaInDbList.filter { n -> mediaInfoList.none { n.mediaId.uri == it.uri } }
         LOG.info("Got ${newMediaList.size} new files and ${notInUseList.size} files to be deactivated")
         notInUseList.forEach {
-            mediaRepository.update(it.copy(status = MediaStatus.INACTIVE, updated = LocalDateTime.now()))
+            if (it.status == MediaStatus.ACTIVE)
+                mediaRepository.update(it.copy(status = MediaStatus.INACTIVE, updated = LocalDateTime.now()))
         }
         newMediaList.forEach {
             // upload and save
