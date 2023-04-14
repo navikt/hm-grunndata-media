@@ -17,4 +17,11 @@ class DeleteOldMediaScheduler(
             deleteOldMedia.deleteOldFiles()
         }
     }
+
+    @Scheduled(fixedDelay = "30m")
+    fun deleteErrorFiles() {
+        if (leaderElection.isLeader()) {
+            deleteErrorFiles()
+        }
+    }
 }

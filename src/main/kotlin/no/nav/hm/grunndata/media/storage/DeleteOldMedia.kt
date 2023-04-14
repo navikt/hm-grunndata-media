@@ -6,6 +6,7 @@ import no.nav.hm.grunndata.media.model.MediaRepository
 import no.nav.hm.grunndata.media.model.MediaStatus
 import org.slf4j.LoggerFactory
 import java.net.URI
+import java.time.Duration
 import java.time.LocalDateTime
 
 @Singleton
@@ -34,7 +35,24 @@ class DeleteOldMedia(
                 }
                 mediaRepository.delete(media)
             }
+        }
+    }
 
+    fun deleteErrorFiles() {
+        val olderThan = LocalDateTime.now().minus(Duration.ofDays(10))
+        LOG.info("Deleting files that is older than $olderThan and status: ${MediaStatus.ERROR}")
+        runBlocking {
+            val mediaList = mediaRepository.findByStatusAndUpdatedBefore(MediaStatus.ERROR, olderThan)
+            LOG.info("found ${mediaList.size} to be deleted")
+            mediaList.forEach { media ->
+                mediaRepository.findOneByMediaIdUriAndStatus(media.mediaId.uri, MediaStatus.ACTIVE)?.let {
+                    LOG.info("used by at another object, skip deleting media file from cloud storage")
+                } ?: run {
+                    LOG.info("Deleting file from storage: ${media.mediaId.uri}")
+                    storageService.delete(URI(media.mediaId.uri))
+                }
+                mediaRepository.delete(media)
+            }
         }
     }
 }
