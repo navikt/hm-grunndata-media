@@ -38,6 +38,8 @@ spec:
       value: "jdbc:postgresql://${DB_HOST}:5432/media"
     - name: RAPIDSANDRIVERS_ENABLED
       value: "{{ rapidsandrivers_enabled }}"
+    - name: SCHEDULERS_ENABLED
+      value: "{{ schedulers_enabled }}"
     - name: GCP_BUCKET_NAME
       value: "{{ bucket_name }}"
     - name: MEDIA_STORAGE_ENABLED

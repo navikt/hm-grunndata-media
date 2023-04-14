@@ -82,7 +82,7 @@ gcp:
 media:
   storage:
     enabled: ${MEDIA_STORAGE_ENABLED:false}
-    retention: 90d
+    retention: ${MEDIA_STORAGE_RETENTION:90d}
 
 schedulers:
-  enabled: false
+  enabled: ${SCHEDULERS_ENABLED:false}
