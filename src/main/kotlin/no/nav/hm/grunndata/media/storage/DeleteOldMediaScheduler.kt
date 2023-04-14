@@ -9,8 +9,8 @@ import jakarta.inject.Singleton
 class DeleteOldMediaScheduler(
     private val deleteOldMedia: DeleteOldMedia
 ) {
-    
-    @Scheduled(cron = "0 45 0 * * *")
+
+    @Scheduled(cron = "0 45 * * * *")
     fun deleteOldFiles() {
         deleteOldMedia.deleteOldFiles()
     }
