@@ -25,7 +25,10 @@ class DeleteOldMedia(
         LOG.info("Deleting files that is older than $olderThan and status: ${MediaStatus.INACTIVE}")
         runBlocking {
             val mediaList = mediaRepository.findByStatusAndUpdatedBefore(MediaStatus.INACTIVE, olderThan)
-            LOG.info("found ${mediaList.size} to be deleted")
+            if (mediaList.size > 1000) {
+                LOG.error("Too many files on delete list ${mediaList.size}, please check if it is correct")
+                return@runBlocking
+            }
             mediaList.forEach { media ->
                 mediaRepository.findOneByMediaIdUriAndStatus(media.mediaId.uri, MediaStatus.ACTIVE)?.let {
                     LOG.debug("used by at another object, skip deleting media file")
@@ -43,7 +46,10 @@ class DeleteOldMedia(
         LOG.info("Deleting files that is older than $olderThan and status: ${MediaStatus.ERROR}")
         runBlocking {
             val mediaList = mediaRepository.findByStatusAndUpdatedBefore(MediaStatus.ERROR, olderThan)
-            LOG.info("found ${mediaList.size} to be deleted")
+            if (mediaList.size > 1000) {
+                LOG.error("Too many files on delete list ${mediaList.size}, please check if it is correct")
+                return@runBlocking
+            }
             mediaList.forEach { media ->
                 mediaRepository.findOneByMediaIdUriAndStatus(media.mediaId.uri, MediaStatus.ACTIVE)?.let {
                     LOG.info("used by at another object ${it.mediaId.oid}, skip deleting media file from cloud storage")
