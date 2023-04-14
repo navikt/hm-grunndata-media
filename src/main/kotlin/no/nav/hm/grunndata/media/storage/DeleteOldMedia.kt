@@ -46,7 +46,7 @@ class DeleteOldMedia(
             LOG.info("found ${mediaList.size} to be deleted")
             mediaList.forEach { media ->
                 mediaRepository.findOneByMediaIdUriAndStatus(media.mediaId.uri, MediaStatus.ACTIVE)?.let {
-                    LOG.info("used by at another object, skip deleting media file from cloud storage")
+                    LOG.info("used by at another object ${it.mediaId.oid}, skip deleting media file from cloud storage")
                 } ?: run {
                     LOG.info("Deleting file from storage: ${media.mediaId.uri}")
                     storageService.delete(URI(media.mediaId.uri))
