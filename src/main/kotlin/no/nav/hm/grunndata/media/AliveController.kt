@@ -26,8 +26,8 @@ class AliveController(private val storageService: StorageService) {
         val destinationUri = URI("64661-test.jpg")
         LOG.info("Check upload bucket, uploading..")
         storageService.uploadStream(sourceUri, destinationUri, "image/jpeg")
-        //LOG.info("upload works, deleting")
-        //storageService.delete(destinationUri)
+        LOG.info("upload works, deleting")
+        storageService.delete(destinationUri)
         return "SUCCESS"
     }
 
