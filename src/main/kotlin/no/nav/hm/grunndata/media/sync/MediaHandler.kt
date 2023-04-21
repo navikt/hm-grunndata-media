@@ -48,7 +48,7 @@ open class MediaHandler(
                         Media(
                             mediaId = MediaId(oid = oid, uri = it.uri),
                             size = m.size, type = m.type, sourceUri = m.sourceUri, source = m.source,
-                            md5 = m.md5, status = MediaStatus.ACTIVE
+                            md5 = m.md5, status = m.status
                         )
                     )
                 } ?: run {
