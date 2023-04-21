@@ -1,22 +1,26 @@
 package no.nav.hm.grunndata.media.sync
 
 import jakarta.inject.Singleton
+import no.nav.hm.grunndata.media.imageio.ImageHandler
 import no.nav.hm.grunndata.media.model.Media
 import no.nav.hm.grunndata.media.model.MediaId
 import no.nav.hm.grunndata.media.model.MediaRepository
 import no.nav.hm.grunndata.media.model.MediaStatus
 import no.nav.hm.grunndata.media.storage.StorageService
 import no.nav.hm.grunndata.rapid.dto.MediaInfo
+import no.nav.hm.grunndata.rapid.dto.MediaType
 import org.slf4j.LoggerFactory
 import java.net.URI
 import java.time.LocalDateTime
 import java.util.*
 import javax.transaction.Transactional
 
+
 @Singleton
 open class MediaHandler(
     private val mediaRepository: MediaRepository,
-    private val storageService: StorageService
+    private val storageService: StorageService,
+    private val imageHandler: ImageHandler
 ) {
 
 
@@ -52,23 +56,7 @@ open class MediaHandler(
                         )
                     )
                 } ?: run {
-                    val upload =
-                        storageService.uploadStream(
-                            sourceUri = URI(it.sourceUri),
-                            destinationUri = URI(it.uri),
-                            contentType = URI(it.sourceUri).getContentType()
-                        )
-                    mediaRepository.save(
-                        Media(
-                            mediaId = MediaId(uri = it.uri, oid = oid),
-                            size = upload.size,
-                            type = it.type,
-                            sourceUri = it.sourceUri,
-                            source = it.source,
-                            md5 = upload.md5hash,
-                            status = MediaStatus.ACTIVE,
-                        )
-                    )
+                    uploadAndCreateMedia(it, oid)
                 }
             } catch (e: Exception) {
                 LOG.error("""Got exception while trying to upload ${it.uri} with text "${it.text}" to cloud""", e)
@@ -86,6 +74,39 @@ open class MediaHandler(
             }
         }
     }
+
+    private suspend fun uploadAndCreateMedia(mediaInfo: MediaInfo,
+                                             oid: UUID) {
+        val sourceUri = URI(mediaInfo.sourceUri)
+        val destinationURI = URI(mediaInfo.uri)
+        val contentType = sourceUri.getContentType()
+        val upload =
+            storageService.uploadStream(
+                sourceUri = sourceUri,
+                destinationUri = destinationURI,
+                contentType = contentType
+            )
+        if (MediaType.IMAGE == mediaInfo.type && upload.size > 0) {
+            val smallUri = "small/${mediaInfo.uri}"
+            val resp = imageHandler.createImageVersionInputStream(sourceUri, "small")?.let {
+                storageService.uploadStream(it, URI(smallUri), contentType)
+            }
+            LOG.info("created small version: $smallUri with size: ${resp?.size}")
+        }
+        
+        mediaRepository.save(
+            Media(
+                mediaId = MediaId(uri = mediaInfo.uri, oid = oid),
+                size = upload.size,
+                type = mediaInfo.type,
+                sourceUri = mediaInfo.sourceUri,
+                source = mediaInfo.source,
+                md5 = upload.md5hash,
+                status = MediaStatus.ACTIVE,
+            )
+        )
+    }
+
 
 }
 

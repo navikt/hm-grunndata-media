@@ -9,6 +9,7 @@ import io.micronaut.objectstorage.googlecloud.GoogleCloudStorageOperations
 import io.micronaut.objectstorage.request.UploadRequest
 import jakarta.inject.Singleton
 import org.slf4j.LoggerFactory
+import java.io.InputStream
 import java.net.URI
 
 
@@ -32,24 +33,36 @@ class GCStorageStorageService(
     }
 
     override fun uploadStream(sourceUri: URI, destinationUri: URI, contentType: String): StorageResponse {
-        return if (mediaConfig.enabled) {
-            val key = makeKey(destinationUri)
-            LOG.info("Uploading ${key} from sourceUri $sourceUri")
-            val blobId: BlobId = BlobId.of(config.bucket, key)
-            val blobInfo = BlobInfo.newBuilder(blobId).apply {
-                setContentType(contentType)
-            }.build()
-            sourceUri.toURL().openStream().use {
-                val blob = storage.createFrom(blobInfo, it)
-                StorageResponse(
-                    etag = blob.etag, key = key, size = blob.size,
-                    md5hash = blob.md5ToHexString
-                )
-            }
-        } else StorageResponse(
-            etag = "notstored", key = "notstored", size = 0,
-            md5hash = "notstored"
-        )
+        val key = makeKey(destinationUri)
+        LOG.info("Uploading ${key} from sourceUri $sourceUri")
+        val blobId: BlobId = BlobId.of(config.bucket, key)
+        val blobInfo = BlobInfo.newBuilder(blobId).apply {
+            setContentType(contentType)
+        }.build()
+        return sourceUri.toURL().openStream().use {
+            val blob = storage.createFrom(blobInfo, it)
+            StorageResponse(
+                etag = blob.etag, key = key, size = blob.size,
+                md5hash = blob.md5ToHexString
+            )
+        }
+
+    }
+
+    override fun uploadStream(source: InputStream, destinationUri: URI, contentType: String): StorageResponse {
+        val key = makeKey(destinationUri)
+        LOG.info("Uploading ${key} from inputstream")
+        val blobId: BlobId = BlobId.of(config.bucket, key)
+        val blobInfo = BlobInfo.newBuilder(blobId).apply {
+            setContentType(contentType)
+        }.build()
+        return source.use {
+            val blob = storage.createFrom(blobInfo, it)
+            StorageResponse(
+                etag = blob.etag, key = key, size = blob.size,
+                md5hash = blob.md5ToHexString
+            )
+        }
     }
 
     override fun uploadFile(file: CompletedFileUpload, destinationUri: URI): StorageResponse {
