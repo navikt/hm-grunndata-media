@@ -12,8 +12,9 @@ import kotlin.math.min
 @Singleton
 class ImageHandler {
 
-    val small = Dimension(640, 640)
-    val medium = Dimension(1280, 1280)
+    private val small = Dimension(640, 640)
+    private val medium = Dimension(1280, 1280)
+    private val large = Dimension(2560, 2560)
 
     companion object {
         private val LOG = LoggerFactory.getLogger(ImageHandler::class.java)
@@ -30,12 +31,12 @@ class ImageHandler {
         return resizedImage
     }
 
-    fun resizeImage(imageUri: URI, boundary: Dimension): BufferedImage {
+    private fun resizeImage(imageUri: URI, boundary: Dimension): BufferedImage {
         val image = ImageIO.read(imageUri.toURL())
         return resizeImage(image, boundary)
     }
 
-    fun getScaledDimension(imageSize: Dimension, boundary: Dimension): Dimension {
+    private fun getScaledDimension(imageSize: Dimension, boundary: Dimension): Dimension {
         val widthRatio = boundary.getWidth() / imageSize.getWidth()
         val heightRatio = boundary.getHeight() / imageSize.getHeight()
         val ratio = min(widthRatio, heightRatio)
@@ -45,4 +46,6 @@ class ImageHandler {
     fun resizeSmall(imageUri: URI) = resizeImage(imageUri, small)
 
     fun resizeMedium(imageUri: URI) = resizeImage(imageUri, medium)
+
+    fun resizeLarge(imageUri: URI) = resizeImage(imageUri, large)
 }
