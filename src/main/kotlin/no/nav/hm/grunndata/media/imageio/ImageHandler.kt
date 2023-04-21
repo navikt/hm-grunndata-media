@@ -4,6 +4,9 @@ import jakarta.inject.Singleton
 import org.slf4j.LoggerFactory
 import java.awt.Dimension
 import java.awt.image.BufferedImage
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
 import java.net.URI
 import javax.imageio.ImageIO
 import kotlin.math.min
@@ -45,7 +48,21 @@ class ImageHandler {
 
     fun resizeSmall(imageUri: URI) = resizeImage(imageUri, small)
 
+    fun createImageVersionInputStream(sourceUri: URI, imageVersion: String): InputStream? {
+        if ("small" == imageVersion) {
+            val formatName = sourceUri.path.substringAfterLast(".").lowercase()
+            if ("jpg" == formatName || "png" == formatName || "gif" == formatName) {
+                val bos = ByteArrayOutputStream()
+                ImageIO.write(resizeSmall(sourceUri), formatName, bos)
+                return ByteArrayInputStream(bos.toByteArray())
+            }
+        }
+        return null
+    }
+
     fun resizeMedium(imageUri: URI) = resizeImage(imageUri, medium)
 
     fun resizeLarge(imageUri: URI) = resizeImage(imageUri, large)
+
+
 }
