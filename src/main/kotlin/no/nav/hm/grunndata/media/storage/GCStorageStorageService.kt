@@ -71,21 +71,20 @@ class GCStorageStorageService(
         return StorageResponse(etag = response.etag, key = key, size = response.size, md5hash = response.md5ToHexString)
     }
 
-    private fun makeKey(destinationUri: URI): String {
+    private fun makeKey(destinationUri: URI, sizeVersion: String? = null): String {
         val objectName = destinationUri.path
-        val key = "$PREFIX/$objectName"
-        LOG.debug("Got $key")
-        return key
+        return if (sizeVersion != null) "$PREFIX/$sizeVersion/$objectName" else "$PREFIX/$objectName"
     }
 
 
     override fun delete(uri: URI): Boolean {
         val key = makeKey(uri)
-        LOG.info("Deleting $key and small/$key from gcp bucket")
-        val smallBlobId: BlobId = BlobId.of(config.bucket, "small/$key")
+        val smallKey = makeKey(uri, "small")
+        LOG.info("Deleting $key and $smallKey from gcp bucket")
+        val smallBlobId: BlobId = BlobId.of(config.bucket, "$smallKey")
         storage.delete(smallBlobId)
         val blobId: BlobId = BlobId.of(config.bucket, key)
         return storage.delete(blobId)
     }
-    
+
 }
