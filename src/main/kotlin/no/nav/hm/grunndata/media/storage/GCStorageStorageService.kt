@@ -81,7 +81,7 @@ class GCStorageStorageService(
         val key = makeKey(uri)
         val smallKey = makeKey(uri, "small")
         LOG.info("Deleting $key and $smallKey from gcp bucket")
-        val smallBlobId: BlobId = BlobId.of(config.bucket, "$smallKey")
+        val smallBlobId: BlobId = BlobId.of(config.bucket, smallKey)
         storage.delete(smallBlobId)
         val blobId: BlobId = BlobId.of(config.bucket, key)
         return storage.delete(blobId)
