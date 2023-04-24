@@ -15,12 +15,12 @@ import kotlin.math.min
 @Singleton
 class ImageHandler {
 
-    private val small = Dimension(640, 640)
-    private val medium = Dimension(1280, 1280)
-    private val large = Dimension(2560, 2560)
-
     companion object {
         private val LOG = LoggerFactory.getLogger(ImageHandler::class.java)
+        val SMALL = Dimension(640, 640)
+        val MEDIUM = Dimension(1280, 1280)
+        val LARGE = Dimension(2560, 2560)
+
     }
 
     private fun resizeImage(image: BufferedImage, boundary: Dimension): BufferedImage {
@@ -46,10 +46,10 @@ class ImageHandler {
         return Dimension((imageSize.width * ratio).toInt(), (imageSize.height * ratio).toInt())
     }
 
-    fun resizeSmall(imageUri: URI) = resizeImage(imageUri, small)
+    fun resizeSmall(imageUri: URI) = resizeImage(imageUri, SMALL)
 
-    fun createImageVersionInputStream(sourceUri: URI, imageVersion: String): InputStream? {
-        if ("small" == imageVersion) {
+    fun createImageVersionInputStream(sourceUri: URI, imageVersion: Dimension): InputStream? {
+        if (SMALL == imageVersion) {
             val formatName = sourceUri.path.substringAfterLast(".").lowercase()
             if ("jpg" == formatName || "png" == formatName || "gif" == formatName) {
                 val bos = ByteArrayOutputStream()
@@ -60,9 +60,9 @@ class ImageHandler {
         return null
     }
 
-    fun resizeMedium(imageUri: URI) = resizeImage(imageUri, medium)
+    fun resizeMedium(imageUri: URI) = resizeImage(imageUri, MEDIUM)
 
-    fun resizeLarge(imageUri: URI) = resizeImage(imageUri, large)
+    fun resizeLarge(imageUri: URI) = resizeImage(imageUri, LARGE)
 
 
 }

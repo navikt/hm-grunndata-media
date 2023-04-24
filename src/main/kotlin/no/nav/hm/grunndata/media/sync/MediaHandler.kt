@@ -2,6 +2,7 @@ package no.nav.hm.grunndata.media.sync
 
 import jakarta.inject.Singleton
 import no.nav.hm.grunndata.media.imageio.ImageHandler
+import no.nav.hm.grunndata.media.imageio.ImageHandler.Companion.SMALL
 import no.nav.hm.grunndata.media.model.Media
 import no.nav.hm.grunndata.media.model.MediaId
 import no.nav.hm.grunndata.media.model.MediaRepository
@@ -88,12 +89,12 @@ open class MediaHandler(
             )
         if (MediaType.IMAGE == mediaInfo.type && upload.size > 0) {
             val smallUri = "small/${mediaInfo.uri}"
-            val resp = imageHandler.createImageVersionInputStream(sourceUri, "small")?.let {
+            val resp = imageHandler.createImageVersionInputStream(sourceUri, SMALL)?.let {
                 storageService.uploadStream(it, URI(smallUri), contentType)
             }
             LOG.info("created small version: $smallUri with size: ${resp?.size}")
         }
-        
+
         mediaRepository.save(
             Media(
                 mediaId = MediaId(uri = mediaInfo.uri, oid = oid),
