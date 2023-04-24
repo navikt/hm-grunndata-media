@@ -22,11 +22,12 @@ class UploadMediaController(private val storageService: StorageService,
 
     companion object {
         const val V1_UPLOAD_MEDIA = "/api/v1/media"
+        const val UPLOAD_PREFIX = "register"
         private val LOG = LoggerFactory.getLogger(UploadMediaController::class.java)
     }
 
     @Post(
-        value = "/file/{oid}",
+        value = "/register/file/{oid}",
         consumes = [io.micronaut.http.MediaType.MULTIPART_FORM_DATA],
         produces = [io.micronaut.http.MediaType.APPLICATION_JSON]
     )
@@ -40,7 +41,7 @@ class UploadMediaController(private val storageService: StorageService,
         val type = getMediaType(file)
         if (type == MediaType.OTHER) throw UknownMediaSource("only png, jpg, pdf is supported")
 
-        val uri = "${oid}/${UUID.randomUUID()}.${file.extension}"
+        val uri = "$UPLOAD_PREFIX/${oid}/${UUID.randomUUID()}.${file.extension}"
         LOG.info("Got file ${file.filename} with uri: $uri and size: ${file.size} for $oid")
 
         val response = storageService.uploadFile(file, URI(uri))
@@ -58,14 +59,14 @@ class UploadMediaController(private val storageService: StorageService,
     }
 
     @Post(
-        value = "/files/{oid}",
+        value = "/register/files/{oid}",
         consumes = [io.micronaut.http.MediaType.MULTIPART_FORM_DATA],
         produces = [io.micronaut.http.MediaType.APPLICATION_JSON]
     )
     suspend fun uploadFiles(oid: UUID,
                             files: Publisher<CompletedFileUpload>): List<MediaDTO> =
         files.asFlow().map { uploadToGCS(it, oid) }.toList()
-    
+
 
     private fun getMediaType(file: CompletedFileUpload): MediaType {
         return when (file.extension.lowercase()) {
