@@ -12,6 +12,5 @@ interface StorageService {
     fun uploadFile(file: CompletedFileUpload, destinationUri: URI): StorageResponse
 
     fun delete(uri: URI): Boolean
-
-    fun deleteList(uriList: List<URI>): Boolean
+    
 }

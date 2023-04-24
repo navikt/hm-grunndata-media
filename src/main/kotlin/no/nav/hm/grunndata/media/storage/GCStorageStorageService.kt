@@ -81,16 +81,11 @@ class GCStorageStorageService(
 
     override fun delete(uri: URI): Boolean {
         val key = makeKey(uri)
-        LOG.info("Deleting $key from gcp bucket")
+        LOG.info("Deleting $key and small/$key from gcp bucket")
+        val smallBlobId: BlobId = BlobId.of(config.bucket, "small/$key")
+        storage.delete(smallBlobId)
         val blobId: BlobId = BlobId.of(config.bucket, key)
         return storage.delete(blobId)
     }
-
-    override fun deleteList(uriList: List<URI>): Boolean {
-        val batchId = uriList.map {
-            BlobId.of(config.bucket, makeKey(it))
-        }
-        return storage.delete(batchId)[0]
-    }
-
+    
 }
