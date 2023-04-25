@@ -7,5 +7,6 @@
   "max_replicas": 2,
   "schedulers_enabled": true,
   "bucket_name": "frontend-plattform-prod-teamdigihot",
-  "media_storage_enabled": true
+  "media_storage_enabled": true,
+  "media_storage_cdnurl": "https://cdn.nav.no/teamdigihot/grunndata/media/v1"
 }

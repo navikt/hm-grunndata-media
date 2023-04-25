@@ -8,5 +8,6 @@ import java.time.Duration
 class MediaStorageConfig : Toggleable {
     var enabled: Boolean = false
     var retention: Duration = Duration.ofMillis(300)
+    var cdnurl: String = "http://localhost"
 
 }

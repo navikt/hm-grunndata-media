@@ -46,6 +46,8 @@ spec:
       value: "{{ media_storage_enabled }}"
     - name: GCP_CREDENTIALS_LOCATION
       value: "/var/run/secrets/credentials/hm-grunndata-media/secret"
+    - name: MEDIA_STORAGE_CDNURL
+      value: "{{ media_storage_cdnurl }}"
   gcp:
     sqlInstances:
       - name: hm-grunndata-media

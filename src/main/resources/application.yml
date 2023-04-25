@@ -83,9 +83,12 @@ media:
   storage:
     enabled: ${MEDIA_STORAGE_ENABLED:false}
     retention: ${MEDIA_STORAGE_RETENTION:90d}
+    cdnurl: ${MEDIA_STORAGE_CDNURL:https://cdn.dev.nav.no/teamdigihot/grunndata/media/v1}
 
 schedulers:
   enabled: ${SCHEDULERS_ENABLED:false}
 
 elector:
   path: ${ELECTOR_PATH:localhost}
+
+

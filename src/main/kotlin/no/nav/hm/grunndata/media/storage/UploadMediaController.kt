@@ -18,7 +18,8 @@ import java.util.*
 
 @Controller(V1_UPLOAD_MEDIA)
 class UploadMediaController(private val storageService: StorageService,
-                            private val mediaRepository: MediaRepository) {
+                            private val mediaRepository: MediaRepository,
+                            private val mediaStorageConfig: MediaStorageConfig) {
 
     companion object {
         const val V1_UPLOAD_MEDIA = "/api/v1/upload/media"
@@ -48,7 +49,7 @@ class UploadMediaController(private val storageService: StorageService,
         return mediaRepository.save(
             Media(
                 mediaId = MediaId(oid = oid, uri = uri),
-                sourceUri = uri,
+                sourceUri = "${mediaStorageConfig.cdnurl}/$uri",
                 type = type,
                 size = response.size,
                 status = MediaStatus.ACTIVE,
