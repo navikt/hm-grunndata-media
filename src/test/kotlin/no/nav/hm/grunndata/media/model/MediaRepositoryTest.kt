@@ -14,10 +14,13 @@ class MediaRepositoryTest(private val mediaRepository: MediaRepository) {
     fun crudMediaRepositoryTest() {
         val uri = UUID.randomUUID().toString()
         val oid = UUID.randomUUID()
+        val oid2 = UUID.randomUUID()
         val media = Media(mediaId = MediaId(uri = uri, oid = oid), size = 12345, md5 = "0f0e", sourceUri = uri)
+        val media2 = Media(mediaId = MediaId(uri = uri, oid = oid2), size = 12345, md5 = "0f0f", sourceUri = uri)
         runBlocking {
             val saved = mediaRepository.save(media)
             saved.shouldNotBeNull()
+            val saved2 = mediaRepository.save(media2)
             val inDb = mediaRepository.findById(MediaId(oid, uri))
             inDb.shouldNotBeNull()
             inDb.status shouldBe MediaStatus.ACTIVE
@@ -26,6 +29,8 @@ class MediaRepositoryTest(private val mediaRepository: MediaRepository) {
 
             val list = mediaRepository.findByMediaIdOid(oid)
             list.size shouldBe 1
+            val distinct = mediaRepository.findDistinctMediaIdUriByStatus(MediaStatus.ACTIVE)
+            distinct.size shouldBe 1
         }
     }
 }
