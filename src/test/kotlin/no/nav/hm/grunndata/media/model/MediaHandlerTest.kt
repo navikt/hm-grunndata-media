@@ -6,7 +6,6 @@ import io.kotest.matchers.shouldBe
 import io.micronaut.test.annotation.MockBean
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import io.mockk.mockk
-import no.nav.hm.grunndata.media.imageio.ImageHandler
 import no.nav.hm.grunndata.media.storage.StorageService
 import no.nav.hm.grunndata.media.sync.MediaHandler
 import no.nav.hm.grunndata.rapid.dto.MediaInfo
@@ -14,14 +13,14 @@ import org.junit.jupiter.api.Test
 import java.util.*
 
 @MicronautTest
-class MediaHandlerTest(private val mediaRepository: MediaRepository, private val imageHandler: ImageHandler) {
+class MediaHandlerTest(private val mediaRepository: MediaRepository) {
 
     @MockBean(StorageService::class)
     fun storageUpload(): StorageService = mockk(relaxed = true)
 
     @Test
     fun testMediaSync() {
-        val mediaHandler = MediaHandler(mediaRepository, storageUpload(), imageHandler)
+        val mediaHandler = MediaHandler(mediaRepository, storageUpload())
         val oid = UUID.randomUUID()
         runBlocking {
             val media1 = Media(

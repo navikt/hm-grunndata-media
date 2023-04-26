@@ -6,7 +6,6 @@ import io.kotest.matchers.shouldBe
 import io.micronaut.test.annotation.MockBean
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import io.mockk.mockk
-import no.nav.hm.grunndata.media.imageio.ImageHandler
 import no.nav.hm.grunndata.media.storage.StorageService
 import no.nav.hm.grunndata.media.sync.MediaHandler
 import no.nav.hm.grunndata.rapid.dto.MediaInfo
@@ -14,12 +13,12 @@ import org.junit.jupiter.api.Test
 import java.util.*
 
 @MicronautTest
-class AllowReuseOfMediaTest(private val mediaRepository: MediaRepository, private val imageHandler: ImageHandler) {
+class AllowReuseOfMediaTest(private val mediaRepository: MediaRepository) {
 
     @MockBean(StorageService::class)
     fun storageUpload(): StorageService = mockk(relaxed = true)
 
-    val mediaHandler = MediaHandler(mediaRepository, storageUpload(), imageHandler)
+    val mediaHandler = MediaHandler(mediaRepository, storageUpload())
 
     @Test
     fun mediaShouldBeAbleReuseUris() {
