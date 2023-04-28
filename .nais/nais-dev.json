@@ -8,5 +8,6 @@
   "schedulers_enabled": true,
   "bucket_name": "frontend-plattform-dev-teamdigihot",
   "media_storage_enabled": true,
-  "media_storage_cdnurl": "https://cdn.dev.nav.no/teamdigihot/grunndata/media/v1"
+  "media_storage_cdnurl": "https://cdn.dev.nav.no/teamdigihot/grunndata/media/v1",
+  "java_opts": "-Xms128m -Xmx512m"
 }

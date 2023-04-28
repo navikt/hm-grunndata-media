@@ -10,20 +10,20 @@ spec:
   port: 8080
   liveness:
     path: /internal/isAlive
-    initialDelay: 20
+    initialDelay: 10
   readiness:
     path: /internal/isReady
-    initialDelay: 20
+    initialDelay: 10
   replicas:
     min: {{min_replicas}}
     max: {{max_replicas}}
     cpuThresholdPercentage: 50
   resources:
     limits:
-      memory: 2048Mi
+      memory: 1536Mi
     requests:
       cpu: 200m
-      memory: 256Mi
+      memory: 128Mi
   prometheus:
     enabled: true
     path: /internal/prometheus
@@ -48,6 +48,8 @@ spec:
       value: "/var/run/secrets/credentials/hm-grunndata-media/secret"
     - name: MEDIA_STORAGE_CDNURL
       value: "{{ media_storage_cdnurl }}"
+    - name: JAVA_OPTS
+      value: "{{java_opts}}"
   gcp:
     sqlInstances:
       - name: hm-grunndata-media
