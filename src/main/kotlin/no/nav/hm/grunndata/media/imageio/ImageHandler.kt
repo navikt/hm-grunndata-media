@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.net.URI
 import javax.imageio.ImageIO
+import javax.imageio.ImageReader
 import kotlin.math.min
 
 
@@ -17,10 +18,17 @@ class ImageHandler {
 
     companion object {
         private val LOG = LoggerFactory.getLogger(ImageHandler::class.java)
-        val SMALL = Dimension(640, 640)
-        val MEDIUM = Dimension(1280, 1280)
-        val LARGE = Dimension(2560, 2560)
+        val SMALL = Dimension(400, 400)
+        val MEDIUM = Dimension(800, 800)
+        val LARGE = Dimension(1600, 1600)
 
+    }
+
+    init {
+        val readers: Iterator<ImageReader> = ImageIO.getImageReadersByFormatName("JPEG")
+        while (readers.hasNext()) {
+            LOG.info("reader: " + readers.next())
+        }
     }
 
     private fun resizeImage(image: BufferedImage, boundary: Dimension): BufferedImage {

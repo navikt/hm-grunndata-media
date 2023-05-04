@@ -16,6 +16,7 @@ val kotestVersion = "5.5.5"
 val jakartaPersistenceVersion = "3.1.0"
 val rapidsRiversVersion = "202303011052"
 val grunndataDtoVersion = "202304180956"
+val imageIOJpgPluginVersion = "3.9.4"
 
 
 group = "no.nav.hm"
@@ -64,6 +65,7 @@ dependencies {
     implementation("io.micronaut.gcp:micronaut-gcp-common")
     implementation("io.micronaut.objectstorage:micronaut-object-storage-gcp")
 
+    implementation("com.twelvemonkeys.imageio:imageio-jpeg:$imageIOJpgPluginVersion")
     testImplementation("io.mockk:mockk:$mockkVersion")
     testImplementation("io.micronaut.test:micronaut-test-kotest5")
     testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion")

@@ -3,20 +3,14 @@ package no.nav.hm.grunndata.media.imageio
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import no.nav.hm.grunndata.media.imageio.ImageHandler.Companion.SMALL
-import no.nav.hm.grunndata.media.storage.MediaUploadTest
-import java.io.File
-import javax.imageio.ImageIO
+import org.junit.jupiter.api.Test
 
 @MicronautTest
 class ImageHandlerTest(private val imageHandler: ImageHandler) {
 
-    //@Test
+    @Test
     fun testImageResize() {
-        val imageUri = MediaUploadTest::class.java.classLoader.getResource("64341_4.jpg").toURI()
-        val formatName = imageUri.path.substringAfterLast(".")
-        ImageIO.write(imageHandler.resizeSmall(imageUri), formatName, File("small.$formatName"))
-        ImageIO.write(imageHandler.resizeMedium(imageUri), formatName, File("medium.$formatName"))
-        ImageIO.write(imageHandler.resizeLarge(imageUri), formatName, File("large.$formatName"))
+        val imageUri = ImageHandlerTest::class.java.classLoader.getResource("66131.jpg").toURI()
         imageHandler.createImageVersionInputStream(imageUri, SMALL).shouldNotBeNull()
     }
 
