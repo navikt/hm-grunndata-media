@@ -6,8 +6,9 @@ import io.micronaut.context.annotation.Requires
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.rapids_rivers.*
 import no.nav.hm.grunndata.media.model.MediaRepository
-import no.nav.hm.grunndata.rapid.dto.ProductDTO
+import no.nav.hm.grunndata.rapid.dto.ProductRapidDTO
 import no.nav.hm.grunndata.rapid.dto.rapidDTOVersion
+import no.nav.hm.grunndata.rapid.event.EventName
 import no.nav.hm.grunndata.rapid.event.RapidApp
 import no.nav.hm.rapids_rivers.micronaut.RiverHead
 import org.slf4j.LoggerFactory
@@ -29,7 +30,7 @@ class MediaSyncRiver(
         LOG.info("Using Rapid DTO version $rapidDTOVersion")
         river
             .validate { it.demandValue("createdBy", RapidApp.grunndata_db) }
-            .validate { it.demandValue("payloadType", ProductDTO::class.java.simpleName) }
+            .validate { it.demandValue("eventName", EventName.hmdbproductsyncV1) }
             .validate { it.demandKey("eventId") }
             .validate { it.demandKey("payload") }
             .validate { it.demandKey("dtoVersion") }
@@ -41,7 +42,7 @@ class MediaSyncRiver(
         val eventId = packet["eventId"].asText()
         val dtoVersion = packet["dtoVersion"].asLong()
         if (dtoVersion > rapidDTOVersion) LOG.warn("dto version $dtoVersion is newer than $rapidDTOVersion")
-        val dto = objectMapper.treeToValue(packet["payload"], ProductDTO::class.java)
+        val dto = objectMapper.treeToValue(packet["payload"], ProductRapidDTO::class.java)
         val createdTime = packet["createdTime"].asLocalDateTime()
         LOG.info("Got eventId: $eventId for product ${dto.id} createdTime: $createdTime")
         runBlocking {
