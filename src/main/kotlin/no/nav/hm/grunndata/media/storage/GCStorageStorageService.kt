@@ -49,14 +49,14 @@ class GCStorageStorageService(
 
     }
 
-    override fun uploadStream(source: InputStream, destinationUri: URI, contentType: String): StorageResponse {
+    override fun uploadStream(inputStream: InputStream, destinationUri: URI, contentType: String): StorageResponse {
         val key = makeKey(destinationUri)
         LOG.info("Uploading ${key} from inputstream")
         val blobId: BlobId = BlobId.of(config.bucket, key)
         val blobInfo = BlobInfo.newBuilder(blobId).apply {
             setContentType(contentType)
         }.build()
-        return source.use {
+        return inputStream.use {
             val blob = storage.createFrom(blobInfo, it)
             StorageResponse(
                 etag = blob.etag, key = key, size = blob.size,
