@@ -3,6 +3,7 @@ package no.nav.hm.grunndata.media.storage
 import com.google.cloud.storage.BlobId
 import com.google.cloud.storage.BlobInfo
 import com.google.cloud.storage.Storage
+import io.micronaut.context.annotation.Requires
 import io.micronaut.http.multipart.CompletedFileUpload
 import io.micronaut.objectstorage.googlecloud.GoogleCloudStorageConfiguration
 import io.micronaut.objectstorage.googlecloud.GoogleCloudStorageOperations
@@ -14,6 +15,7 @@ import java.net.URI
 
 
 @Singleton
+@Requires(notEnv = ["local"])
 class GCStorageStorageService(
     private val storage: Storage,
     private val config: GoogleCloudStorageConfiguration,

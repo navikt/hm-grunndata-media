@@ -34,11 +34,11 @@ class UploadMediaController(private val storageService: StorageService,
     )
     suspend fun uploadFile(oid: UUID,
                            file: CompletedFileUpload): MediaDTO {
-        return uploadToGCS(file, oid)
+        return uploadToStorage(file, oid)
     }
 
-    private suspend fun uploadToGCS(file: CompletedFileUpload,
-                                    oid: UUID): MediaDTO {
+    private suspend fun uploadToStorage(file: CompletedFileUpload,
+                                        oid: UUID): MediaDTO {
         val type = getMediaType(file)
         if (type == MediaType.OTHER) throw UknownMediaSource("only png, jpg, pdf is supported")
 
@@ -66,7 +66,7 @@ class UploadMediaController(private val storageService: StorageService,
     )
     suspend fun uploadFiles(oid: UUID,
                             files: Publisher<CompletedFileUpload>): List<MediaDTO> =
-        files.asFlow().map { uploadToGCS(it, oid) }.toList()
+        files.asFlow().map { uploadToStorage(it, oid) }.toList()
 
 
     private fun getMediaType(file: CompletedFileUpload): MediaType {
