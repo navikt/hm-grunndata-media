@@ -22,13 +22,12 @@ class GCStorageStorageService(
 ) : StorageService {
 
     companion object {
-        private const val PREFIX = "teamdigihot/grunndata/media/v1"
         private val LOG = LoggerFactory.getLogger(GCStorageStorageService::class.java)
     }
 
     init {
         LOG.info(
-            """GCS Storage enabled is ${mediaConfig.enabled}, using bucket ${config.bucket}, storing to ${PREFIX}"""
+            """GCS Storage enabled is ${mediaConfig.enabled}, using bucket ${config.bucket}, storing to ${STORAGE_PREFIX}"""
         )
     }
 
@@ -69,11 +68,6 @@ class GCStorageStorageService(
         val key = makeKey(destinationUri)
         val response = gcsOperations.upload(UploadRequest.fromCompletedFileUpload(file, key)).nativeResponse
         return StorageResponse(etag = response.etag, key = key, size = response.size, md5hash = response.md5ToHexString)
-    }
-
-    private fun makeKey(destinationUri: URI): String {
-        val objectName = destinationUri.path
-        return "$PREFIX/$objectName"
     }
 
 
