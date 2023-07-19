@@ -1,5 +1,6 @@
 package no.nav.hm.grunndata.media.storage
 
+import com.google.protobuf.Message
 import io.micronaut.context.annotation.Requires
 import io.micronaut.http.multipart.CompletedFileUpload
 import jakarta.inject.Singleton
@@ -8,6 +9,8 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.net.URI
+import java.security.MessageDigest
+import java.util.*
 
 @Singleton
 @Requires(env = ["local"])
@@ -34,7 +37,8 @@ class FileStorageService: StorageService {
         FileOutputStream(destinatioFile).use {
             it.write(file.bytes)
         }
-        return StorageResponse(etag = "", key = key, size = file.size, md5hash = "")
+        val md5 = file.md5Hex()
+        return StorageResponse(etag = md5, key = key, size = file.size, md5hash = md5)
     }
 
     override fun delete(uri: URI): Boolean {
@@ -42,5 +46,15 @@ class FileStorageService: StorageService {
         LOG.info("Deleting $key from localhost")
         return File(key).delete()
     }
-
 }
+
+fun CompletedFileUpload.md5Hex(): String  {
+    val instance = MessageDigest.getInstance("MD5")!!
+    val digest  = instance.digest(this.bytes)
+    val hex = HexFormat.of().formatHex(digest)
+    instance.reset()
+    return hex
+}
+
+
+
