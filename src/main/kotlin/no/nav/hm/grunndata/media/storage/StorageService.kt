@@ -15,12 +15,12 @@ interface StorageService {
 
     fun delete(uri: URI): Boolean
 
-    fun makeKey(destinationUri: URI): String {
-        val objectName = destinationUri.path
-        return "${STORAGE_PREFIX}/$objectName"
-    }
+
     
 }
 
-
+fun makeKey(destinationUri: URI): String {
+    val objectName = destinationUri.path
+    return "${STORAGE_PREFIX}/$objectName"
+}
 const val STORAGE_PREFIX = "teamdigihot/grunndata/media/v1"

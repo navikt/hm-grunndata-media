@@ -1,6 +1,5 @@
 package no.nav.hm.grunndata.media.storage
 
-import com.google.protobuf.Message
 import io.micronaut.context.annotation.Requires
 import io.micronaut.http.multipart.CompletedFileUpload
 import jakarta.inject.Singleton
