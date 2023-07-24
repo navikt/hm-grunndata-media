@@ -1,6 +1,7 @@
 package no.nav.hm.grunndata.media.storage
 
 import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.multipart.CompletedFileUpload
 import kotlinx.coroutines.flow.*
@@ -27,8 +28,12 @@ class UploadMediaController(private val storageService: StorageService,
         private val LOG = LoggerFactory.getLogger(UploadMediaController::class.java)
     }
 
+    @Get("/oid/{oid}")
+    suspend fun getMediaByOid(oid: UUID): List<MediaDTO> = mediaRepository.findByMediaIdOid(oid).map { it.toDTO() }
+
+
     @Post(
-        value = "/register/file/{oid}",
+        value = "/file/{oid}",
         consumes = [io.micronaut.http.MediaType.MULTIPART_FORM_DATA],
         produces = [io.micronaut.http.MediaType.APPLICATION_JSON]
     )
@@ -60,7 +65,7 @@ class UploadMediaController(private val storageService: StorageService,
     }
 
     @Post(
-        value = "/register/files/{oid}",
+        value = "/files/{oid}",
         consumes = [io.micronaut.http.MediaType.MULTIPART_FORM_DATA],
         produces = [io.micronaut.http.MediaType.APPLICATION_JSON]
     )
