@@ -6,7 +6,6 @@ import io.micronaut.test.annotation.MockBean
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import io.mockk.mockk
 import no.nav.hm.grunndata.media.model.Media
-import no.nav.hm.grunndata.media.model.MediaId
 import no.nav.hm.grunndata.media.model.MediaRepository
 import no.nav.hm.grunndata.media.model.MediaStatus
 import org.junit.jupiter.api.BeforeEach
@@ -31,30 +30,27 @@ class DeleteOldMediaTest(
         runBlocking {
 
             val media1 = Media(
-                mediaId = MediaId(
-                    uri = "$oid/123.jpg",
-                    oid = oid
-                ),
+                id = UUID.randomUUID(),
+                uri = "$oid/123.jpg",
+                oid = oid,
                 size = 1,
                 md5 = "1",
                 sourceUri = "1.jpg"
             )
             mediaRepository.save(media1)
             val media2 = Media(
-                mediaId = MediaId(
-                    uri = "$oid/124.jpg",
-                    oid = oid
-                ),
+                id = UUID.randomUUID(),
+                uri = "$oid/124.jpg",
+                oid = oid,
                 size = 2,
                 md5 = "2",
                 sourceUri = "2.jpg"
             )
             mediaRepository.save(media2)
             val media3 = Media(
-                mediaId = MediaId(
-                    uri = "$oid/125.jpg",
-                    oid = oid
-                ),
+                id = UUID.randomUUID(),
+                uri = "$oid/125.jpg",
+                oid = oid,
                 size = 3,
                 md5 = "3",
                 sourceUri = "3.jpg"
@@ -62,10 +58,9 @@ class DeleteOldMediaTest(
             mediaRepository.save(media3)
 
             val media4 = Media(
-                mediaId = MediaId(
-                    uri = "$oid/125.jpg",
-                    oid = oid2
-                ),
+                id = UUID.randomUUID(),
+                uri = "$oid/125.jpg",
+                oid = oid2,
                 size = 3,
                 md5 = "3",
                 sourceUri = "3.jpg"
@@ -85,8 +80,8 @@ class DeleteOldMediaTest(
     fun deleteOldMedia() {
         deleteOldMedia.deleteOldFiles()
         runBlocking {
-            mediaRepository.findByMediaIdOid(oid).size shouldBe 2
-            mediaRepository.findByMediaIdOid(oid2).size shouldBe 1
+            mediaRepository.findByOid(oid).size shouldBe 2
+            mediaRepository.findByOid(oid2).size shouldBe 1
         }
     }
 }

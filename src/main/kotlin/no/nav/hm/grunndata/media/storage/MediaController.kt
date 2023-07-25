@@ -9,7 +9,6 @@ import kotlinx.coroutines.reactive.asFlow
 import no.nav.hm.grunndata.media.model.*
 import no.nav.hm.grunndata.media.storage.UploadMediaController.Companion.V1_UPLOAD_MEDIA
 import no.nav.hm.grunndata.media.sync.UknownMediaSource
-import no.nav.hm.grunndata.rapid.dto.MediaDTO
 import no.nav.hm.grunndata.rapid.dto.MediaSourceType
 import no.nav.hm.grunndata.rapid.dto.MediaType
 import org.reactivestreams.Publisher
@@ -29,7 +28,7 @@ class UploadMediaController(private val storageService: StorageService,
     }
 
     @Get("/oid/{oid}")
-    suspend fun getMediaByOid(oid: UUID): List<MediaDTO> = mediaRepository.findByMediaIdOid(oid).map { it.toDTO() }
+    suspend fun getMediaByOid(oid: UUID): List<MediaDTO> = mediaRepository.findByOid(oid).map { it.toDTO() }
 
 
     @Post(
@@ -46,14 +45,16 @@ class UploadMediaController(private val storageService: StorageService,
                                         oid: UUID): MediaDTO {
         val type = getMediaType(file)
         if (type == MediaType.OTHER) throw UknownMediaSource("only png, jpg, pdf is supported")
-
-        val uri = "$UPLOAD_PREFIX/${oid}/${UUID.randomUUID()}.${file.extension}"
+        val id = UUID.randomUUID()
+        val uri = "$UPLOAD_PREFIX/${oid}/${id}.${file.extension}"
         LOG.info("Got file ${file.filename} with uri: $uri and size: ${file.size} for $oid")
 
         val response = storageService.uploadFile(file, URI(uri))
         return mediaRepository.save(
             Media(
-                mediaId = MediaId(oid = oid, uri = uri),
+                id = id,
+                oid = oid,
+                uri = uri,
                 sourceUri = "${mediaStorageConfig.cdnurl}/$uri",
                 type = type,
                 size = response.size,

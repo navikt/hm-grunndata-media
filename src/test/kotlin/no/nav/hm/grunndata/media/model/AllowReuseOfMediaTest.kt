@@ -26,28 +26,25 @@ class AllowReuseOfMediaTest(private val mediaRepository: MediaRepository) {
         val oid2 = UUID.randomUUID()
         runBlocking {
             val media1 = Media(
-                mediaId = MediaId(
-                    uri = "1.jpg",
-                    oid = oid
-                ),
+                id = UUID.randomUUID(),
+                uri = "1.jpg",
+                oid = oid,
                 size = 1,
                 md5 = "1",
                 sourceUri = "1.jpg"
             )
             val media2 = Media(
-                mediaId = MediaId(
-                    uri = "2.jpg",
-                    oid = oid
-                ),
+                id = UUID.randomUUID(),
+                uri = "2.jpg",
+                oid = oid,
                 size = 2,
                 md5 = "2",
                 sourceUri = "2.jpg"
             )
             val media3 = Media(
-                mediaId = MediaId(
-                    uri = "3.jpg",
-                    oid = oid
-                ),
+                id = UUID.randomUUID(),
+                uri = "3.jpg",
+                oid = oid,
                 size = 3,
                 md5 = "3",
                 sourceUri = "3.jpg"
@@ -62,12 +59,11 @@ class AllowReuseOfMediaTest(private val mediaRepository: MediaRepository) {
                 MediaInfo(uri = "4.jpg", priority = 4, text = "bilde 4", sourceUri = "4.jpg"),
                 MediaInfo(uri = "5.jpg", priority = 5, text = "bilde 5", sourceUri = "5.jpg")
             )
-            val inDbList2 = mediaRepository.findByMediaIdOid(oid2)
+            val inDbList2 = mediaRepository.findByOid(oid2)
             inDbList2.size shouldBe 0
             mediaHandler.compareAndPersistMedia(mediaInfoList, inDbList2, oid2)
-            mediaRepository.findById(MediaId(oid2, "1.jpg")).shouldNotBeNull()
-            mediaRepository.findByMediaIdOid(oid2).size shouldBe 3
-            mediaRepository.findByMediaIdUri("1.jpg").size shouldBe 2
+            mediaRepository.findByOid(oid2).size shouldBe 3
+            mediaRepository.findByUri("1.jpg").size shouldBe 2
 
         }
     }

@@ -31,11 +31,11 @@ class DeleteOldMedia(
             }
             LOG.info("Found ${mediaList.size} to be deleted")
             mediaList.forEach { media ->
-                mediaRepository.findOneByMediaIdUriAndStatus(media.mediaId.uri, MediaStatus.ACTIVE)?.let {
+                mediaRepository.findOneByUriAndStatus(media.uri, MediaStatus.ACTIVE)?.let {
                     LOG.debug("used by at another object, skip deleting media file")
                 } ?: run {
-                    LOG.info("Deleting file from storage: ${media.mediaId.uri}")
-                    storageService.delete(URI(media.mediaId.uri))
+                    LOG.info("Deleting file from storage: ${media.uri}")
+                    storageService.delete(URI(media.uri))
                 }
                 mediaRepository.delete(media)
             }
@@ -51,11 +51,11 @@ class DeleteOldMedia(
                 LOG.error("Too many files on delete list ${mediaList.size}, please check if it is correct")
             }
             mediaList.forEach { media ->
-                mediaRepository.findOneByMediaIdUriAndStatus(media.mediaId.uri, MediaStatus.ACTIVE)?.let {
-                    LOG.info("used by at another object ${it.mediaId.oid}, skip deleting media file from cloud storage")
+                mediaRepository.findOneByUriAndStatus(media.uri, MediaStatus.ACTIVE)?.let {
+                    LOG.info("used by at another object ${it.oid}, skip deleting media file from cloud storage")
                 } ?: run {
-                    LOG.info("Deleting file from storage: ${media.mediaId.uri}")
-                    storageService.delete(URI(media.mediaId.uri))
+                    LOG.info("Deleting file from storage: ${media.uri}")
+                    storageService.delete(URI(media.uri))
                 }
                 mediaRepository.delete(media)
             }

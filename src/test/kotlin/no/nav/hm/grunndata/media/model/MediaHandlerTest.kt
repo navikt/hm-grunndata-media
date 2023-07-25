@@ -24,28 +24,25 @@ class MediaHandlerTest(private val mediaRepository: MediaRepository) {
         val oid = UUID.randomUUID()
         runBlocking {
             val media1 = Media(
-                mediaId = MediaId(
-                    uri = "1.jpg",
-                    oid = oid
-                ),
+                id =  UUID.randomUUID(),
+                uri = "1.jpg",
+                oid = oid,
                 size = 1,
                 md5 = "1",
                 sourceUri = "1.jpg"
             )
             val media2 = Media(
-                mediaId = MediaId(
-                    uri = "2.jpg",
-                    oid = oid
-                ),
+                id = UUID.randomUUID(),
+                uri = "2.jpg",
+                oid = oid,
                 size = 2,
                 md5 = "2",
                 sourceUri = "2.jpg"
             )
             val media3 = Media(
-                mediaId = MediaId(
-                    uri = "3.jpg",
-                    oid = oid
-                ),
+                id = UUID.randomUUID(),
+                uri = "3.jpg",
+                oid = oid,
                 size = 3,
                 md5 = "3",
                 sourceUri = "3.jpg"
@@ -58,14 +55,14 @@ class MediaHandlerTest(private val mediaRepository: MediaRepository) {
                 MediaInfo(uri = "5.jpg", priority = 5, text = "bilde 5", sourceUri = "5.jpg")
             )
             mediaHandler.compareAndPersistMedia(mediaInfoList, mediaList, oid)
-            val inDb = mediaRepository.findByMediaIdOid(oid)
+            val inDb = mediaRepository.findByOid(oid)
             inDb.shouldNotBeNull()
             inDb.size shouldBe 5
             inDb.count { it.status == MediaStatus.ACTIVE } shouldBe 3
             inDb.count { it.status == MediaStatus.INACTIVE } shouldBe 2
             inDb.filter { it.status == MediaStatus.INACTIVE }
-                .sortedBy { it.mediaId.uri }
-                .first().mediaId.uri shouldBe "2.jpg"
+                .sortedBy { it.uri }
+                .first().uri shouldBe "2.jpg"
 
         }
     }

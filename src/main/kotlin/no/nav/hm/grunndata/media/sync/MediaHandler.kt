@@ -2,7 +2,6 @@ package no.nav.hm.grunndata.media.sync
 
 import jakarta.inject.Singleton
 import no.nav.hm.grunndata.media.model.Media
-import no.nav.hm.grunndata.media.model.MediaId
 import no.nav.hm.grunndata.media.model.MediaRepository
 import no.nav.hm.grunndata.media.model.MediaStatus
 import no.nav.hm.grunndata.media.storage.StorageService
@@ -31,8 +30,8 @@ open class MediaHandler(
         mediaInDbList: List<Media>,
         oid: UUID
     ) {
-        val newMediaList = mediaInfoList.filter { m -> mediaInDbList.none { m.uri == it.mediaId.uri } }
-        val notInUseList = mediaInDbList.filter { n -> mediaInfoList.none { n.mediaId.uri == it.uri } }
+        val newMediaList = mediaInfoList.filter { m -> mediaInDbList.none { m.uri == it.uri } }
+        val notInUseList = mediaInDbList.filter { n -> mediaInfoList.none { n.uri == it.uri } }
         LOG.info("Got ${newMediaList.size} new files and ${notInUseList.size} files to be deactivated")
         notInUseList.forEach {
             if (it.status == MediaStatus.ACTIVE)
@@ -41,15 +40,21 @@ open class MediaHandler(
         newMediaList.forEach {
             // upload and save
             try {
-                mediaRepository.findOneByMediaIdUri(it.uri)?.let { m ->
+                mediaRepository.findOneByUri(it.uri)?.let { m ->
                     LOG.debug(
-                        """Allowing reuse/shared media, skip upload for this media uri: ${m.mediaId.uri}"""
+                        """Allowing reuse/shared media, skip upload for this media uri: ${m.uri}"""
                     )
                     mediaRepository.save(
                         Media(
-                            mediaId = MediaId(oid = oid, uri = it.uri),
-                            size = m.size, type = m.type, sourceUri = m.sourceUri, source = m.source,
-                            md5 = m.md5, status = MediaStatus.ACTIVE
+                            id = UUID.randomUUID(),
+                            oid = oid,
+                            uri = it.uri,
+                            size = m.size,
+                            type = m.type,
+                            sourceUri = m.sourceUri,
+                            source = m.source,
+                            md5 = m.md5,
+                            status = MediaStatus.ACTIVE
                         )
                     )
                 } ?: run {
@@ -59,7 +64,9 @@ open class MediaHandler(
                 LOG.error("""Got exception while trying to upload ${it.uri} with text "${it.text}" to cloud""", e)
                 mediaRepository.save(
                     Media(
-                        mediaId = MediaId(uri = it.uri, oid = oid),
+                        id = UUID.randomUUID(),
+                        uri = it.uri,
+                        oid = oid,
                         size = 0,
                         type = it.type,
                         status = MediaStatus.ERROR,
@@ -85,7 +92,9 @@ open class MediaHandler(
             )
         mediaRepository.save(
             Media(
-                mediaId = MediaId(uri = mediaInfo.uri, oid = oid),
+                id = UUID.randomUUID(),
+                uri = mediaInfo.uri,
+                oid = oid,
                 size = upload.size,
                 type = mediaInfo.type,
                 sourceUri = mediaInfo.sourceUri,
