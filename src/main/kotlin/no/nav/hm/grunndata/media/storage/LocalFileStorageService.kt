@@ -17,6 +17,7 @@ class FileStorageService: StorageService {
 
     companion object {
         private val LOG = LoggerFactory.getLogger(FileStorageService::class.java)
+        const val LOCALPATH = "/tmp"
     }
 
     override fun uploadStream(sourceUri: URI, destinationUri: URI, contentType: String): StorageResponse {
@@ -29,7 +30,7 @@ class FileStorageService: StorageService {
 
     override fun uploadFile(file: CompletedFileUpload, destinationUri: URI): StorageResponse {
         val key = makeKey(destinationUri)
-        val destinatioFile = File(key)
+        val destinatioFile = File("$LOCALPATH/$key")
         val destinationDirectory = File(destinatioFile.parent)
         if (!destinationDirectory.exists()) destinationDirectory.mkdirs()
         LOG.info("Storing file $key in path ${destinatioFile.parent} in localhost")
@@ -43,7 +44,7 @@ class FileStorageService: StorageService {
     override fun delete(uri: URI): Boolean {
         val key = makeKey(uri)
         LOG.info("Deleting $key from localhost")
-        return File(key).delete()
+        return File("$LOCALPATH/$key").delete()
     }
 }
 
