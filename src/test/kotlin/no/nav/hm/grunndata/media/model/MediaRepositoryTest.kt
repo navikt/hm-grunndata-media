@@ -31,7 +31,11 @@ class MediaRepositoryTest(private val mediaRepository: MediaRepository) {
 
             val list = mediaRepository.findByOid(oid)
             list.size shouldBe 1
+            val oidUri = mediaRepository.findByOidAndUri(oid, uri)
+            oidUri!!.uri shouldBe uri
+            oidUri!!.oid shouldBe oid
             val distinct = mediaRepository.findDistinctUriByStatus(MediaStatus.ACTIVE)
+
             distinct.size shouldBe 1
         }
     }

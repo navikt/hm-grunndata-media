@@ -78,10 +78,10 @@ class UploadMediaController(private val storageService: StorageService,
         files.asFlow().map { uploadToStorage(it, oid) }.toList()
 
 
-    @Delete("/{id}")
-    suspend fun deleteById(id:UUID): MediaDTO =  mediaRepository.findById(id)?.let {
+    @Delete("/{oid}/{uri}")
+    suspend fun deleteById(oid:UUID, uri: String): MediaDTO =  mediaRepository.findByOidAndUri(oid, uri)?.let {
             mediaRepository.update(it.copy(status = MediaStatus.DELETED, updated = LocalDateTime.now())).toDTO()
-        } ?: throw BadRequestException("Not found $id")
+        } ?: throw BadRequestException("Not found $oid and $uri")
 
 
     private fun getMediaType(file: CompletedFileUpload): MediaType {
