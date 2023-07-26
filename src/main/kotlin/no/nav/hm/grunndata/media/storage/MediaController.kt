@@ -1,6 +1,7 @@
 package no.nav.hm.grunndata.media.storage
 
 import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Delete
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.multipart.CompletedFileUpload
@@ -8,12 +9,14 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.reactive.asFlow
 import no.nav.hm.grunndata.media.model.*
 import no.nav.hm.grunndata.media.storage.UploadMediaController.Companion.V1_UPLOAD_MEDIA
+import no.nav.hm.grunndata.media.sync.BadRequestException
 import no.nav.hm.grunndata.media.sync.UknownMediaSource
 import no.nav.hm.grunndata.rapid.dto.MediaSourceType
 import no.nav.hm.grunndata.rapid.dto.MediaType
 import org.reactivestreams.Publisher
 import org.slf4j.LoggerFactory
 import java.net.URI
+import java.time.LocalDateTime
 import java.util.*
 
 @Controller(V1_UPLOAD_MEDIA)
@@ -73,6 +76,12 @@ class UploadMediaController(private val storageService: StorageService,
     suspend fun uploadFiles(oid: UUID,
                             files: Publisher<CompletedFileUpload>): List<MediaDTO> =
         files.asFlow().map { uploadToStorage(it, oid) }.toList()
+
+
+    @Delete("/{id}")
+    suspend fun deleteById(id:UUID): MediaDTO =  mediaRepository.findById(id)?.let {
+            mediaRepository.update(it.copy(status = MediaStatus.DELETED, updated = LocalDateTime.now())).toDTO()
+        } ?: throw BadRequestException("Not found $id")
 
 
     private fun getMediaType(file: CompletedFileUpload): MediaType {
