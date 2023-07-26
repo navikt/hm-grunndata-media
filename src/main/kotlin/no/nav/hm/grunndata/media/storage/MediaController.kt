@@ -79,7 +79,7 @@ class UploadMediaController(private val storageService: StorageService,
 
 
     @Delete("/{oid}/{uri}")
-    suspend fun deleteById(oid:UUID, uri: String): MediaDTO =  mediaRepository.findByOidAndUri(oid, uri)?.let {
+    suspend fun deleteByOidAndUri(oid:UUID, uri: String): MediaDTO =  mediaRepository.findByOidAndUri(oid, uri)?.let {
             mediaRepository.update(it.copy(status = MediaStatus.DELETED, updated = LocalDateTime.now())).toDTO()
         } ?: throw BadRequestException("Not found $oid and $uri")
 
