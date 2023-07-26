@@ -17,7 +17,7 @@ class FileStorageService: StorageService {
 
     companion object {
         private val LOG = LoggerFactory.getLogger(FileStorageService::class.java)
-        const val LOCALPATH = "/tmp"
+        const val LOCALPATH = "/app"
     }
 
     override fun uploadStream(sourceUri: URI, destinationUri: URI, contentType: String): StorageResponse {
