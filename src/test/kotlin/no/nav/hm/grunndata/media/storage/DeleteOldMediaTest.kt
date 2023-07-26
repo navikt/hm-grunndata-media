@@ -73,14 +73,21 @@ class DeleteOldMediaTest(
                     status = MediaStatus.INACTIVE
                 )
             )
+
+            mediaRepository.update(
+                media2.copy(
+                    updated = LocalDateTime.now().minusDays(190),
+                    status = MediaStatus.DELETED
+                )
+            )
         }
     }
 
     @Test
     fun deleteOldMedia() {
-        deleteOldMedia.deleteOldFiles()
         runBlocking {
-            mediaRepository.findByOid(oid).size shouldBe 2
+            deleteOldMedia.deleteOldFiles()
+            mediaRepository.findByOid(oid).size shouldBe 1
             mediaRepository.findByOid(oid2).size shouldBe 1
         }
     }

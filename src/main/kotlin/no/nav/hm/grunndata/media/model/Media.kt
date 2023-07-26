@@ -31,7 +31,10 @@ data class Media(
 
 
 enum class MediaStatus {
-    ACTIVE, INACTIVE, ERROR
+    ACTIVE, // media is used by product
+    INACTIVE, // media is not used by product
+    DELETED, // media is deleted by user/supplier
+    ERROR // something is wrong
 }
 
 
