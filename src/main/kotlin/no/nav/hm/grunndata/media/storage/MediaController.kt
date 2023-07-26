@@ -26,7 +26,8 @@ class UploadMediaController(private val storageService: StorageService,
 
     companion object {
         const val V1_UPLOAD_MEDIA = "/api/v1/upload/media"
-        const val UPLOAD_PREFIX = "register"
+        const val REGISTER_UPLOAD_PREFIX = "register"
+        const val IMPORT_UPLOAD_PREFIX="import"
         private val LOG = LoggerFactory.getLogger(UploadMediaController::class.java)
     }
 
@@ -35,21 +36,23 @@ class UploadMediaController(private val storageService: StorageService,
 
 
     @Post(
-        value = "/file/{oid}",
+        uri = "/{app}/file/{oid}",
         consumes = [io.micronaut.http.MediaType.MULTIPART_FORM_DATA],
         produces = [io.micronaut.http.MediaType.APPLICATION_JSON]
     )
-    suspend fun uploadFile(oid: UUID,
+    suspend fun uploadFile(oid: UUID, app: String,
                            file: CompletedFileUpload): MediaDTO {
-        return uploadToStorage(file, oid)
+        return uploadToStorage(file, app, oid)
     }
 
-    private suspend fun uploadToStorage(file: CompletedFileUpload,
+    private suspend fun uploadToStorage(file: CompletedFileUpload, app:String,
                                         oid: UUID): MediaDTO {
         val type = getMediaType(file)
         if (type == MediaType.OTHER) throw UknownMediaSource("only png, jpg, pdf is supported")
+        if ("register"!=app) throw BadRequestException("Not allowed, only register is supported!")
+
         val id = UUID.randomUUID()
-        val uri = "$UPLOAD_PREFIX/${oid}/${id}.${file.extension}"
+        val uri = "$REGISTER_UPLOAD_PREFIX/${oid}/${id}.${file.extension}"
         LOG.info("Got file ${file.filename} with uri: $uri and size: ${file.size} for $oid")
 
         val response = storageService.uploadFile(file, URI(uri))
@@ -69,13 +72,13 @@ class UploadMediaController(private val storageService: StorageService,
     }
 
     @Post(
-        value = "/files/{oid}",
+        uri = "/{app}/files/{oid}",
         consumes = [io.micronaut.http.MediaType.MULTIPART_FORM_DATA],
         produces = [io.micronaut.http.MediaType.APPLICATION_JSON]
     )
-    suspend fun uploadFiles(oid: UUID,
+    suspend fun uploadFiles(oid: UUID, app: String,
                             files: Publisher<CompletedFileUpload>): List<MediaDTO> =
-        files.asFlow().map { uploadToStorage(it, oid) }.toList()
+        files.asFlow().map { uploadToStorage(it, app, oid) }.toList()
 
 
     @Delete("/{oid}/{uri}")
