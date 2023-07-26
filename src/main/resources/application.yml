@@ -83,7 +83,7 @@ media:
   storage:
     enabled: ${MEDIA_STORAGE_ENABLED:false}
     retention: ${MEDIA_STORAGE_RETENTION:180d}
-    cdnurl: ${MEDIA_STORAGE_CDNURL:`http://localhost:8081/local`}
+    cdnurl: ${MEDIA_STORAGE_CDNURL:`http://localhost:8080/local`}
 
 schedulers:
   enabled: ${SCHEDULERS_ENABLED:false}
