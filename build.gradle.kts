@@ -15,7 +15,7 @@ val mockkVersion = "1.13.4"
 val kotestVersion = "5.5.5"
 val jakartaPersistenceVersion = "3.1.0"
 val rapidsRiversVersion = "202305081226"
-val grunndataDtoVersion = "202307281019"
+val grunndataDtoVersion = "202307310829"
 val imageIOJpgPluginVersion = "3.9.4"
 
 
