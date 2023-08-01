@@ -1,6 +1,7 @@
 package no.nav.hm.grunndata.media.sync
 
 import jakarta.inject.Singleton
+import jakarta.transaction.Transactional
 import no.nav.hm.grunndata.media.model.Media
 import no.nav.hm.grunndata.media.model.MediaRepository
 import no.nav.hm.grunndata.media.model.MediaStatus
@@ -10,7 +11,6 @@ import org.slf4j.LoggerFactory
 import java.net.URI
 import java.time.LocalDateTime
 import java.util.*
-import javax.transaction.Transactional
 
 
 @Singleton
