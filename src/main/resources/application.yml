@@ -79,6 +79,7 @@ gcp:
   project-id:
   credentials:
     location: ${GCP_CREDENTIALS_LOCATION:/path/to/credential}
+
 media:
   storage:
     enabled: ${MEDIA_STORAGE_ENABLED:false}
