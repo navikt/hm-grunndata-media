@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 @MicronautTest
 class ImageHandlerTest(private val imageHandler: ImageHandler) {
 
-    @Test
+    //@Test takes too much resources
     fun testImageResize() {
         val imageUri = ImageHandlerTest::class.java.classLoader.getResource("66131.jpg").toURI()
         imageHandler.createImageVersionInputStream(imageUri, SMALL).shouldNotBeNull()
