@@ -61,7 +61,7 @@ open class MediaHandler(
                     uploadAndCreateMedia(it, oid)
                 }
             } catch (e: Exception) {
-                LOG.error("""Got exception while trying to upload ${it.uri} with text "${it.text}" to cloud""", e)
+                LOG.error("""Got exception while trying to upload sourceUri: ${it.sourceUri}, uri: ${it.uri} with text: "${it.text}" to cloud""", e)
                 mediaRepository.save(
                     Media(
                         id = UUID.randomUUID(),
