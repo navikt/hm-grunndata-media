@@ -31,9 +31,11 @@ class UploadMediaController(private val storageService: StorageService,
         private val LOG = LoggerFactory.getLogger(UploadMediaController::class.java)
     }
 
-    @Get("/oid/{oid}")
-    suspend fun getMediaByOid(oid: UUID): List<MediaDTO> = mediaRepository.findByOid(oid).map { it.toDTO() }
-
+    @Get("/{app}/oid/{oid}")
+    suspend fun getMediaByOid(app: String, oid: UUID): List<MediaDTO>  {
+        LOG.info("Got request for media list of oid $oid from $app")
+        return mediaRepository.findByOid(oid).map { it.toDTO() }
+    }
 
     @Post(
         uri = "/{app}/file/{oid}",
@@ -81,8 +83,10 @@ class UploadMediaController(private val storageService: StorageService,
         files.asFlow().map { uploadToStorage(it, app, oid) }.toList()
 
 
-    @Delete("/{oid}/{uri}")
-    suspend fun deleteByOidAndUri(oid:UUID, uri: String): MediaDTO =  mediaRepository.findByOidAndUri(oid, uri)?.let {
+    @Delete("/{app}/{oid}/{uri}")
+    suspend fun deleteByOidAndUri(app: String, oid:UUID, uri: String): MediaDTO =
+        mediaRepository.findByOidAndUri(oid, uri)?.let {
+            LOG.info("Got deleted request from $app for $oid and $uri")
             mediaRepository.update(it.copy(status = MediaStatus.DELETED, updated = LocalDateTime.now())).toDTO()
         } ?: throw BadRequestException("Not found $oid and $uri")
 
