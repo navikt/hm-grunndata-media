@@ -69,14 +69,14 @@ class DeleteOldMediaTest(
 
             mediaRepository.update(
                 media3.copy(
-                    updated = LocalDateTime.now().minusDays(190),
+                    updated = LocalDateTime.now().minusDays(390),
                     status = MediaStatus.INACTIVE
                 )
             )
 
             mediaRepository.update(
                 media2.copy(
-                    updated = LocalDateTime.now().minusDays(190),
+                    updated = LocalDateTime.now().minusDays(390),
                     status = MediaStatus.DELETED
                 )
             )

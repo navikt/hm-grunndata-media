@@ -15,7 +15,7 @@ class MediaStorageDefaultConfigTest(
     @Test
     fun testDefaultConfigs() {
         mediaStorageConfig.enabled shouldBe false
-        mediaStorageConfig.retention shouldBe Duration.of(180, ChronoUnit.DAYS)
+        mediaStorageConfig.retention shouldBe Duration.of(365, ChronoUnit.DAYS)
     }
 
 

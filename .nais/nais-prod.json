@@ -9,5 +9,6 @@
   "bucket_name": "frontend-plattform-prod-teamdigihot",
   "media_storage_enabled": true,
   "media_storage_cdnurl": "https://cdn.nav.no/teamdigihot/grunndata/media/v1",
-  "java_opts": "-Xms128m -Xmx1024m"
+  "java_opts": "-Xms128m -Xmx1024m",
+  "media_storage_retention": "365d"
 }

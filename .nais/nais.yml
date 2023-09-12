@@ -52,6 +52,8 @@ spec:
       value: "{{ media_storage_cdnurl }}"
     - name: JAVA_OPTS
       value: "{{java_opts}}"
+    - name: MEDIA_STORAGE_RETENTION
+      value: "{{ media_storage_retention }}"
   gcp:
     sqlInstances:
       - name: hm-grunndata-media
