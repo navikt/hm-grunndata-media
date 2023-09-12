@@ -40,9 +40,9 @@ open class MediaHandler(
         newMediaList.forEach {
             // upload and save
             try {
-                mediaRepository.findOneByUri(it.uri)?.let { m ->
+                mediaRepository.findOneByUri(it.sourceUri)?.let { m ->
                     LOG.debug(
-                        """Allowing reuse/shared media, skip upload for this media uri: ${m.uri}"""
+                        """Allowing reuse/shared media, skip upload for this media sourceUri: ${it.sourceUri} uri: ${it.uri}"""
                     )
                     mediaRepository.save(
                         Media(

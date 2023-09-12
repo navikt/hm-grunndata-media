@@ -1,0 +1,1 @@
+CREATE INDEX media_v1_source_uri_idx on media_v1(source_uri);
