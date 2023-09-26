@@ -51,13 +51,13 @@ class UploadMediaController(private val storageService: StorageService,
                                         oid: UUID): MediaDTO {
         val type = getMediaType(file)
         if (type == MediaType.OTHER) throw UknownMediaSource("only png, jpg, pdf is supported")
-        if ("register"!=app) throw BadRequestException("Not allowed, only register is supported!")
+        if (REGISTER_UPLOAD_PREFIX!=app || IMPORT_UPLOAD_PREFIX != app ) throw BadRequestException("Not allowed, only register or import is supported!")
         val extension = getMediaExtension(file.extension)
 
         val id = UUID.randomUUID()
-        val uri = "$REGISTER_UPLOAD_PREFIX/${oid}/${id}.$extension"
+        val uri = "$app/${oid}/${id}.$extension"
         LOG.info("Got file ${file.filename} with uri: $uri and size: ${file.size} for $oid")
-
+        val source = if (app == REGISTER_UPLOAD_PREFIX) MediaSourceType.REGISTER else MediaSourceType.IMPORTAPI
         val response = storageService.uploadFile(file, URI(uri))
         return mediaRepository.save(
             Media(
@@ -69,7 +69,7 @@ class UploadMediaController(private val storageService: StorageService,
                 size = response.size,
                 status = MediaStatus.ACTIVE,
                 md5 = response.md5hash,
-                source = MediaSourceType.REGISTER // should only come from register
+                source = source
             )
         ).toDTO()
     }
