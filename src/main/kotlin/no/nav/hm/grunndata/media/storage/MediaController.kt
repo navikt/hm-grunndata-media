@@ -57,7 +57,7 @@ class UploadMediaController(private val storageService: StorageService,
         val id = UUID.randomUUID()
         val uri = "$app/${oid}/${id}.$extension"
         LOG.info("Got file ${file.filename} with uri: $uri and size: ${file.size} for $oid")
-        val source = if (app == REGISTER_UPLOAD_PREFIX) MediaSourceType.REGISTER else MediaSourceType.IMPORTAPI
+        val source = if (app == REGISTER_UPLOAD_PREFIX) MediaSourceType.REGISTER else MediaSourceType.IMPORT
         val response = storageService.uploadFile(file, URI(uri))
         return mediaRepository.save(
             Media(
