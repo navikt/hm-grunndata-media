@@ -7,6 +7,7 @@ import no.nav.hm.grunndata.media.model.MediaRepository
 import no.nav.hm.grunndata.media.model.MediaStatus
 import no.nav.hm.grunndata.media.storage.StorageService
 import no.nav.hm.grunndata.rapid.dto.MediaInfo
+import no.nav.hm.grunndata.rapid.dto.MediaSourceType
 import org.slf4j.LoggerFactory
 import java.net.URI
 import java.time.LocalDateTime
@@ -38,44 +39,51 @@ open class MediaHandler(
                 mediaRepository.update(it.copy(status = MediaStatus.INACTIVE, updated = LocalDateTime.now()))
         }
         newMediaList.forEach {
-            // upload and save
-            try {
-                mediaRepository.findOneByUri(it.uri)?.let { m ->
-                    LOG.debug(
-                        """Allowing reuse/shared media, skip upload for this media sourceUri: ${it.sourceUri} uri: ${it.uri}"""
+            if (it.source!=MediaSourceType.EXTERNALURL) {
+                // upload and save
+                try {
+
+                    mediaRepository.findOneByUri(it.uri)?.let { m ->
+                        LOG.debug(
+                            """Allowing reuse/shared media, skip upload for this media sourceUri: ${it.sourceUri} uri: ${it.uri}"""
+                        )
+                        mediaRepository.save(
+                            Media(
+                                id = UUID.randomUUID(),
+                                oid = oid,
+                                uri = it.uri,
+                                size = m.size,
+                                type = m.type,
+                                sourceUri = m.sourceUri,
+                                source = m.source,
+                                md5 = m.md5,
+                                status = MediaStatus.ACTIVE
+                            )
+                        )
+                    } ?: run {
+                        uploadAndCreateMedia(it, oid)
+                    }
+                } catch (e: Exception) {
+                    LOG.error(
+                        """Got exception while trying to upload sourceUri: ${it.sourceUri}, uri: ${it.uri} with text: "${it.text}" to cloud""",
+                        e
                     )
                     mediaRepository.save(
                         Media(
                             id = UUID.randomUUID(),
-                            oid = oid,
                             uri = it.uri,
-                            size = m.size,
-                            type = m.type,
-                            sourceUri = m.sourceUri,
-                            source = m.source,
-                            md5 = m.md5,
-                            status = MediaStatus.ACTIVE
+                            oid = oid,
+                            size = 0,
+                            type = it.type,
+                            status = MediaStatus.ERROR,
+                            source = it.source,
+                            md5 = "",
+                            sourceUri = it.sourceUri
                         )
                     )
-                } ?: run {
-                    uploadAndCreateMedia(it, oid)
                 }
-            } catch (e: Exception) {
-                LOG.error("""Got exception while trying to upload sourceUri: ${it.sourceUri}, uri: ${it.uri} with text: "${it.text}" to cloud""", e)
-                mediaRepository.save(
-                    Media(
-                        id = UUID.randomUUID(),
-                        uri = it.uri,
-                        oid = oid,
-                        size = 0,
-                        type = it.type,
-                        status = MediaStatus.ERROR,
-                        source = it.source,
-                        md5 = "",
-                        sourceUri = it.sourceUri
-                    )
-                )
             }
+            else LOG.info("media is external url, skip handling this ${it.uri} ${it.type}")
         }
     }
 
