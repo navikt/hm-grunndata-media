@@ -49,9 +49,9 @@ class UploadMediaController(private val storageService: StorageService,
 
     private suspend fun uploadToStorage(file: CompletedFileUpload, app:String,
                                         oid: UUID): MediaDTO {
+        LOG.info("Got request to upload file for ${file.name} oid: $oid and $app")
         val type = getMediaType(file)
         if (type == MediaType.OTHER) throw UknownMediaSource("only png, jpg, pdf is supported")
-        if (REGISTER_UPLOAD_PREFIX!=app || IMPORT_UPLOAD_PREFIX != app ) throw BadRequestException("Not allowed, only register or import is supported!")
         val extension = getMediaExtension(file.extension)
 
         val id = UUID.randomUUID()
