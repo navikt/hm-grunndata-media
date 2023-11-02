@@ -39,6 +39,7 @@ open class MediaHandler(
                 mediaRepository.update(it.copy(status = MediaStatus.INACTIVE, updated = LocalDateTime.now()))
         }
         newMediaList.forEach {
+            LOG.info("Got new media for $oid with uri ${it.uri}")
             if (it.source!=MediaSourceType.EXTERNALURL) {
                 // upload and save
                 try {
