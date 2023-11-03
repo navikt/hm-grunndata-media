@@ -49,7 +49,7 @@ class AgreementMediaSyncRiver(
         LOG.info("Got eventId: $eventId for agreement ${dto.id}")
         runBlocking {
             val inDbList = mediaRepository.findByOid(dto.id)
-            val mediaInfoList = dto.attachments.flatMap { it.media }
+            val mediaInfoList = dto.attachments.flatMap { it.media }.toSet()
             mediaHandler.compareAndPersistMedia(mediaInfoList, inDbList, dto.id)
         }
     }

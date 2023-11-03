@@ -54,7 +54,7 @@ class AllowReuseOfMediaTest(private val mediaRepository: MediaRepository) {
 
             inDbList1.size shouldBe 3
 
-            val mediaInfoList = listOf(
+            val mediaInfoList = setOf(
                 MediaInfo(uri = "1.jpg", priority = 4, text = "bilde 1", sourceUri = "1.jpg"),
                 MediaInfo(uri = "4.jpg", priority = 4, text = "bilde 4", sourceUri = "4.jpg"),
                 MediaInfo(uri = "5.jpg", priority = 5, text = "bilde 5", sourceUri = "5.jpg")

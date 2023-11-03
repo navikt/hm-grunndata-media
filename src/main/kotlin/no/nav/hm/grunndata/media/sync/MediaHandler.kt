@@ -27,7 +27,7 @@ open class MediaHandler(
 
     @Transactional
     open suspend fun compareAndPersistMedia(
-        mediaInfoList: List<MediaInfo>,
+        mediaInfoList: Set<MediaInfo>,
         mediaInDbList: List<Media>,
         oid: UUID
     ) {

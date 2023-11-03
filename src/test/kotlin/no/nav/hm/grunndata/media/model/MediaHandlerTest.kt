@@ -29,7 +29,7 @@ class MediaHandlerTest(private val mediaRepository: MediaRepository) {
                 oid = oid,
                 size = 1,
                 md5 = "1",
-                sourceUri = "1.jpg"
+                sourceUri = "1.jpg",
             )
             val media2 = Media(
                 id = UUID.randomUUID(),
@@ -49,10 +49,10 @@ class MediaHandlerTest(private val mediaRepository: MediaRepository) {
             )
             val mediaList =
                 listOf(mediaRepository.save(media1), mediaRepository.save(media2), mediaRepository.save(media3))
-            val mediaInfoList = listOf(
+            val mediaInfoList = setOf(
                 MediaInfo(uri = "1.jpg", priority = 4, text = "bilde 1", sourceUri = "1.jpg"),
-                MediaInfo(uri = "4.jpg", priority = 4, text = "bilde 4", sourceUri = "4.jpg"),
-                MediaInfo(uri = "5.jpg", priority = 5, text = "bilde 5", sourceUri = "5.jpg")
+                MediaInfo(uri = "4.jpg", priority = 5, text = "bilde 4", sourceUri = "4.jpg"),
+                MediaInfo(uri = "5.jpg", priority = 6, text = "bilde 5", sourceUri = "5.jpg")
             )
             mediaHandler.compareAndPersistMedia(mediaInfoList, mediaList, oid)
             val inDb = mediaRepository.findByOid(oid)
