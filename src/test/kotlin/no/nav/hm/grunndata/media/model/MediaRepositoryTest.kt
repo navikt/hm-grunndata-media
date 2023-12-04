@@ -17,8 +17,8 @@ class MediaRepositoryTest(private val mediaRepository: MediaRepository) {
         val oid2 = UUID.randomUUID()
         val id1 = UUID.randomUUID()
         val id2 = UUID.randomUUID()
-        val media = Media(id = id1 , uri = uri, oid = oid, size = 12345, md5 = "0f0e", sourceUri = uri)
-        val media2 = Media(id = id2, uri = uri, oid = oid2, size = 12345, md5 = "0f0f", sourceUri = uri)
+        val media = Media(id = id1 , filename = "test1", uri = uri, oid = oid, size = 12345, md5 = "0f0e", sourceUri = uri)
+        val media2 = Media(id = id2, filename = "test2", uri = uri, oid = oid2, size = 12345, md5 = "0f0f", sourceUri = uri)
         runBlocking {
             val saved = mediaRepository.save(media)
             saved.shouldNotBeNull()
@@ -28,6 +28,7 @@ class MediaRepositoryTest(private val mediaRepository: MediaRepository) {
             inDb.status shouldBe MediaStatus.ACTIVE
             inDb.size shouldBe 12345
             inDb.md5 shouldBe "0f0e"
+            inDb.filename shouldBe "test1"
 
             val list = mediaRepository.findByOid(oid)
             list.size shouldBe 1

@@ -1,11 +1,8 @@
 package no.nav.hm.grunndata.media.model
 
 
-import io.micronaut.data.annotation.Embeddable
-import io.micronaut.data.annotation.EmbeddedId
 import io.micronaut.data.annotation.Id
 import io.micronaut.data.annotation.MappedEntity
-import jakarta.persistence.Column
 
 
 import no.nav.hm.grunndata.rapid.dto.MediaSourceType
@@ -18,6 +15,7 @@ data class Media(
     @field:Id
     val id: UUID,
     val oid: UUID,
+    val filename: String?= null,
     val uri: String,
     val sourceUri: String,
     val type: MediaType = MediaType.IMAGE,
@@ -41,6 +39,7 @@ enum class MediaStatus {
 fun Media.toDTO(): MediaDTO = MediaDTO(
     id = id,
     oid = oid,
+    filename = filename,
     uri = uri,
     sourceUri = sourceUri,
     source = source,
@@ -55,6 +54,7 @@ fun Media.toDTO(): MediaDTO = MediaDTO(
 data class MediaDTO(
     val id: UUID,
     val oid: UUID,
+    val filename: String?= null,
     val uri: String,
     val sourceUri: String,
     val type: MediaType = MediaType.IMAGE,

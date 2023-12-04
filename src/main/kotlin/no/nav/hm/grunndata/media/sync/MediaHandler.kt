@@ -52,6 +52,7 @@ open class MediaHandler(
                             Media(
                                 id = UUID.randomUUID(),
                                 oid = oid,
+                                filename = m.filename,
                                 uri = it.uri,
                                 size = m.size,
                                 type = m.type,
@@ -72,6 +73,7 @@ open class MediaHandler(
                     mediaRepository.save(
                         Media(
                             id = UUID.randomUUID(),
+                            filename = it.uri,
                             uri = it.uri,
                             oid = oid,
                             size = 0,
@@ -102,6 +104,7 @@ open class MediaHandler(
         mediaRepository.save(
             Media(
                 id = UUID.randomUUID(),
+                filename = mediaInfo.uri,
                 uri = mediaInfo.uri,
                 oid = oid,
                 size = upload.size,

@@ -1,0 +1,1 @@
+ALTER TABLE media_v1 ADD COLUMN filename VARCHAR(255);

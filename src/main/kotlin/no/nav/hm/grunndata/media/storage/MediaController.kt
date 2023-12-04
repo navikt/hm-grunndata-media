@@ -63,6 +63,7 @@ class UploadMediaController(private val storageService: StorageService,
             Media(
                 id = id,
                 oid = oid,
+                filename = file.name,
                 uri = uri,
                 sourceUri = "${mediaStorageConfig.cdnurl}/$uri",
                 type = type,
