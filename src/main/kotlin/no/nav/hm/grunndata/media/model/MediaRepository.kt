@@ -27,4 +27,6 @@ interface MediaRepository : CoroutinePageableCrudRepository<Media, UUID>,
 
     suspend fun findDistinctUriByStatus(status: MediaStatus): List<String>
 
+    suspend fun deleteByOid(oid:UUID): Int
+
 }

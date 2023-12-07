@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory
 
 @Context
 @Requires(bean = KafkaRapid::class)
-class AgreementMediaSyncRiver(
+class AgreementHMDMediaSyncRiver(
     river: RiverHead,
     private val objectMapper: ObjectMapper,
     private val mediaRepository: MediaRepository,
@@ -26,14 +26,14 @@ class AgreementMediaSyncRiver(
 ) : River.PacketListener {
 
     companion object {
-        private val LOG = LoggerFactory.getLogger(AgreementMediaSyncRiver::class.java)
+        private val LOG = LoggerFactory.getLogger(AgreementHMDMediaSyncRiver::class.java)
     }
 
     init {
         LOG.info("Using Rapid DTO version $rapidDTOVersion")
         river
             .validate { it.demandValue("createdBy", RapidApp.grunndata_db) }
-            .validate { it.demandAny("eventName", listOf(EventName.hmdbagreementsyncV1, EventName.syncedRegisterAgreementV1))}
+            .validate { it.demandAny("eventName", listOf(EventName.hmdbagreementsyncV1))}
             .validate { it.demandKey("eventId") }
             .validate { it.demandKey("payload") }
             .validate { it.demandKey("dtoVersion") }
@@ -48,6 +48,8 @@ class AgreementMediaSyncRiver(
         val dto = objectMapper.treeToValue(packet["payload"], AgreementDTO::class.java)
         LOG.info("Got eventId: $eventId for agreement ${dto.id}")
         runBlocking {
+            // hack to allow for re-downloading pdfs
+            mediaRepository.deleteByOid(dto.id)
             val inDbList = mediaRepository.findByOid(dto.id)
             val mediaInfoList = dto.attachments.flatMap { it.media }.toSet()
             mediaHandler.compareAndPersistMedia(mediaInfoList, inDbList, dto.id)
