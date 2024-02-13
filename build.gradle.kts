@@ -14,7 +14,7 @@ val mockkVersion = "1.13.4"
 val kotestVersion = "5.5.5"
 val jakartaPersistenceVersion = "3.1.0"
 val rapidsRiversVersion = "202401101532"
-val grunndataDtoVersion = "202311161301"
+val grunndataDtoVersion = "202402070957"
 
 
 group = "no.nav.hm"
