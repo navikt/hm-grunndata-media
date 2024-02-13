@@ -124,5 +124,6 @@ fun URI.getContentType(): String = when (path.lowercase().substringAfterLast("."
     "jpg" -> "image/jpeg"
     "png" -> "image/png"
     "pdf" -> "application/pdf"
+    "mp4" -> "video/mp4"
     else -> "application/octet-stream"
 }
