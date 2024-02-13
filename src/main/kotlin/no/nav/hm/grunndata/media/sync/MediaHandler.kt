@@ -33,17 +33,20 @@ open class MediaHandler(
     ) {
         val newMediaList = mediaInfoList.filter { m -> mediaInDbList.none { m.uri == it.uri } }
         val notInUseList = mediaInDbList.filter { n -> mediaInfoList.none { n.uri == it.uri } }
-        LOG.info("Got ${newMediaList.size} new files and ${notInUseList.size} files to be deactivated")
+        val reActiveList = mediaInDbList.filter { m -> mediaInfoList.any { m.uri == it.uri && m.status == MediaStatus.INACTIVE } }
+        LOG.info("Got ${newMediaList.size} new files and ${notInUseList.size} files to be deactivated and ${reActiveList.size} to be reactivated for $oid")
         notInUseList.forEach {
             if (it.status == MediaStatus.ACTIVE)
                 mediaRepository.update(it.copy(status = MediaStatus.INACTIVE, updated = LocalDateTime.now()))
+        }
+        reActiveList.forEach {
+            mediaRepository.update(it.copy(status = MediaStatus.ACTIVE, updated = LocalDateTime.now()))
         }
         newMediaList.forEach {
             LOG.info("Got new media for $oid with uri ${it.uri}")
             if (it.source!=MediaSourceType.EXTERNALURL) {
                 // upload and save
                 try {
-
                     mediaRepository.findOneByUri(it.uri)?.let { m ->
                         LOG.debug(
                             """Allowing reuse/shared media, skip upload for this media sourceUri: ${it.sourceUri} uri: ${it.uri}"""

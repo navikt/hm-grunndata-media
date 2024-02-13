@@ -47,18 +47,28 @@ class MediaHandlerTest(private val mediaRepository: MediaRepository) {
                 md5 = "3",
                 sourceUri = "3.jpg"
             )
+            val media4 = Media(
+                id = UUID.randomUUID(),
+                uri = "4.jpg",
+                oid = oid,
+                size = 4,
+                md5 = "4",
+                sourceUri = "4.jpg",
+                status = MediaStatus.INACTIVE
+            )
             val mediaList =
-                listOf(mediaRepository.save(media1), mediaRepository.save(media2), mediaRepository.save(media3))
+                listOf(mediaRepository.save(media1), mediaRepository.save(media2), mediaRepository.save(media3),mediaRepository.save(media4))
             val mediaInfoList = setOf(
-                MediaInfo(uri = "1.jpg", priority = 4, text = "bilde 1", sourceUri = "1.jpg"),
-                MediaInfo(uri = "4.jpg", priority = 5, text = "bilde 4", sourceUri = "4.jpg"),
-                MediaInfo(uri = "5.jpg", priority = 6, text = "bilde 5", sourceUri = "5.jpg")
+                MediaInfo(uri = "1.jpg", priority = 1, text = "bilde 1", sourceUri = "1.jpg"),
+                MediaInfo(uri = "4.jpg", priority = 4, text = "bilde 4", sourceUri = "4.jpg"),
+                MediaInfo(uri = "5.jpg", priority = 5, text = "bilde 5", sourceUri = "5.jpg"),
+                MediaInfo(uri = "6.jpg", priority = 6, text = "bilde 6", sourceUri = "6.jpg")
             )
             mediaHandler.compareAndPersistMedia(mediaInfoList, mediaList, oid)
             val inDb = mediaRepository.findByOid(oid)
             inDb.shouldNotBeNull()
-            inDb.size shouldBe 5
-            inDb.count { it.status == MediaStatus.ACTIVE } shouldBe 3
+            inDb.size shouldBe 6
+            inDb.count { it.status == MediaStatus.ACTIVE } shouldBe 4
             inDb.count { it.status == MediaStatus.INACTIVE } shouldBe 2
             inDb.filter { it.status == MediaStatus.INACTIVE }
                 .sortedBy { it.uri }
