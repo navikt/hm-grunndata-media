@@ -95,6 +95,7 @@ open class MediaHandler(
         val sourceUri = URI(mediaInfo.sourceUri)
         val destinationURI = URI(mediaInfo.uri)
         val contentType = sourceUri.getContentType()
+        LOG.info("uploading file to $destinationURI with content type $contentType")
         val upload =
             storageService.uploadStream(
                 sourceUri = sourceUri,
