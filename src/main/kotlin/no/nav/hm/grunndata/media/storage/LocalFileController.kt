@@ -4,6 +4,8 @@ import io.micronaut.context.annotation.Requires
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
+import io.micronaut.scheduling.TaskExecutors
+import io.micronaut.scheduling.annotation.ExecuteOn
 import no.nav.hm.grunndata.media.storage.FileStorageService.Companion.LOCALPATH
 import java.io.File
 import java.net.URI
@@ -11,6 +13,7 @@ import java.net.URI
 
 @Controller
 @Requires(env = ["local"])
+@ExecuteOn(TaskExecutors.BLOCKING)
 class LocalFileController {
 
 
