@@ -5,8 +5,6 @@ import io.micronaut.http.annotation.Delete
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.multipart.CompletedFileUpload
-import io.micronaut.scheduling.TaskExecutors
-import io.micronaut.scheduling.annotation.ExecuteOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
@@ -27,7 +25,6 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @Controller(V1_UPLOAD_MEDIA)
-@ExecuteOn(TaskExecutors.BLOCKING)
 class UploadMediaController(
     private val storageService: StorageService,
     private val mediaRepository: MediaRepository,

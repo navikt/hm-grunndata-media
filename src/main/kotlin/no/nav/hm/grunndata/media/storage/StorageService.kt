@@ -7,16 +7,14 @@ import java.net.URI
 interface StorageService {
 
 
-    fun uploadStream(sourceUri: URI, destinationUri: URI, contentType: String): StorageResponse
+    suspend fun uploadStream(sourceUri: URI, destinationUri: URI, contentType: String): StorageResponse
 
-    fun uploadStream(inputStream: InputStream, destinationUri: URI, contentType: String): StorageResponse
+    suspend fun uploadStream(inputStream: InputStream, destinationUri: URI, contentType: String): StorageResponse
 
-    fun uploadFile(file: CompletedFileUpload, destinationUri: URI): StorageResponse
+    suspend fun uploadFile(file: CompletedFileUpload, destinationUri: URI): StorageResponse
 
-    fun delete(uri: URI): Boolean
+    suspend fun delete(uri: URI): Boolean
 
-
-    
 }
 
 fun makeKey(destinationUri: URI): String {

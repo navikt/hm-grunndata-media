@@ -13,7 +13,6 @@ import java.net.URI
 
 @Controller
 @Requires(env = ["local"])
-@ExecuteOn(TaskExecutors.BLOCKING)
 class LocalFileController {
 
 

@@ -9,6 +9,8 @@ import io.micronaut.objectstorage.googlecloud.GoogleCloudStorageConfiguration
 import io.micronaut.objectstorage.googlecloud.GoogleCloudStorageOperations
 import io.micronaut.objectstorage.request.UploadRequest
 import jakarta.inject.Singleton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import java.io.InputStream
 import java.net.URI
@@ -33,51 +35,67 @@ class GCStorageStorageService(
         )
     }
 
-    override fun uploadStream(sourceUri: URI, destinationUri: URI, contentType: String): StorageResponse {
+    override suspend fun uploadStream(sourceUri: URI, destinationUri: URI, contentType: String): StorageResponse {
         val key = makeKey(destinationUri)
         LOG.info("Uploading ${key} from sourceUri $sourceUri")
         val blobId: BlobId = BlobId.of(config.bucket, key)
         val blobInfo = BlobInfo.newBuilder(blobId).apply {
             setContentType(contentType)
         }.build()
-        return sourceUri.toURL().openStream().use {
-            val blob = storage.createFrom(blobInfo, it)
-            StorageResponse(
-                etag = blob.etag, key = key, size = blob.size,
-                md5hash = blob.md5ToHexString
-            )
+        return withContext(Dispatchers.IO) {
+            sourceUri.toURL().openStream()
+                .use {
+                    val blob = storage.createFrom(blobInfo, it)
+                    StorageResponse(
+                        etag = blob.etag, key = key, size = blob.size,
+                        md5hash = blob.md5ToHexString
+                    )
+                }
         }
 
     }
 
-    override fun uploadStream(inputStream: InputStream, destinationUri: URI, contentType: String): StorageResponse {
+    override suspend fun uploadStream(
+        inputStream: InputStream,
+        destinationUri: URI,
+        contentType: String
+    ): StorageResponse {
         val key = makeKey(destinationUri)
         LOG.info("Uploading ${key} from inputstream")
         val blobId: BlobId = BlobId.of(config.bucket, key)
         val blobInfo = BlobInfo.newBuilder(blobId).apply {
             setContentType(contentType)
         }.build()
-        return inputStream.use {
-            val blob = storage.createFrom(blobInfo, it)
+        return withContext(Dispatchers.IO) {
+            inputStream.use {
+                val blob = storage.createFrom(blobInfo, it)
+                StorageResponse(
+                    etag = blob.etag, key = key, size = blob.size,
+                    md5hash = blob.md5ToHexString
+                )
+            }
+        }
+    }
+
+    override suspend fun uploadFile(file: CompletedFileUpload, destinationUri: URI): StorageResponse {
+        val key = makeKey(destinationUri)
+        return withContext(Dispatchers.Default) {
+            val response = gcsOperations.upload(UploadRequest.fromCompletedFileUpload(file, key)).nativeResponse
             StorageResponse(
-                etag = blob.etag, key = key, size = blob.size,
-                md5hash = blob.md5ToHexString
+                etag = response.etag,
+                key = key,
+                size = response.size,
+                md5hash = response.md5ToHexString
             )
         }
     }
 
-    override fun uploadFile(file: CompletedFileUpload, destinationUri: URI): StorageResponse {
-        val key = makeKey(destinationUri)
-        val response = gcsOperations.upload(UploadRequest.fromCompletedFileUpload(file, key)).nativeResponse
-        return StorageResponse(etag = response.etag, key = key, size = response.size, md5hash = response.md5ToHexString)
-    }
 
-
-    override fun delete(uri: URI): Boolean {
+    override suspend fun delete(uri: URI): Boolean {
         val key = makeKey(uri)
         LOG.info("Deleting $key from gcp bucket")
         val blobId: BlobId = BlobId.of(config.bucket, key)
-        return storage.delete(blobId)
+        return withContext(Dispatchers.IO) { storage.delete(blobId) }
     }
 
 }

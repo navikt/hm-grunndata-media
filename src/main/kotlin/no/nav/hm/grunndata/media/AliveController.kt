@@ -21,7 +21,7 @@ class AliveController(private val storageService: StorageService) {
     fun ready() = "OK"
 
     @Post("/check/bucket")
-    fun checkBucketUpload(): String {
+    suspend fun checkBucketUpload(): String {
         val sourceUri = URI("https://www.hjelpemiddeldatabasen.no/blobs/orig/64661.jpg")
         val destinationUri = URI("64661-test.jpg")
         LOG.info("Check upload bucket, uploading..")
