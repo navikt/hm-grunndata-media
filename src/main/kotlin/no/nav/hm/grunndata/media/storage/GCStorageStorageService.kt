@@ -79,7 +79,7 @@ class GCStorageStorageService(
 
     override suspend fun uploadFile(file: CompletedFileUpload, destinationUri: URI): StorageResponse {
         val key = makeKey(destinationUri)
-        return withContext(Dispatchers.Default) {
+        return withContext(Dispatchers.IO) {
             val response = gcsOperations.upload(UploadRequest.fromCompletedFileUpload(file, key)).nativeResponse
             StorageResponse(
                 etag = response.etag,
