@@ -82,3 +82,4 @@ spec:
       rules:
         - application: hm-grunndata-register
         - application: hm-grunndata-import
+        - application: hm-grunndata-media-proxy
