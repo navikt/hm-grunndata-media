@@ -8,8 +8,8 @@ import io.micronaut.http.server.types.files.StreamedFile
 import no.nav.hm.grunndata.media.storage.GCStorageStorageService
 import java.net.URI
 
-@Controller("/internal/bucket/file")
-class BucketFileServer(private val gcStorageStorageService: GCStorageStorageService) {
+@Controller("/internal/media/file")
+class MediaFileServer(private val gcStorageStorageService: GCStorageStorageService) {
 
     @Get("/{uri}", produces = [MediaType.APPLICATION_OCTET_STREAM])
     suspend fun getFile(uri: String): HttpResponse<StreamedFile> {
