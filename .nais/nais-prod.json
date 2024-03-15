@@ -9,6 +9,6 @@
   "bucket_name": "nais-cdn-nav-teamdigihot-6a0e",
   "media_storage_enabled": true,
   "media_storage_cdnurl": "https://cdn.nav.no/teamdigihot/grunndata/media/v1",
-  "java_opts": "-Xms128m -Xmx1024m",
+  "java_opts": "-Xms128m -Xmx2048m",
   "media_storage_retention": "365d"
 }

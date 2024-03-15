@@ -1,5 +1,6 @@
 package no.nav.hm.grunndata.media.storage
 
+import com.google.cloud.storage.Blob
 import com.google.cloud.storage.BlobId
 import com.google.cloud.storage.BlobInfo
 import com.google.cloud.storage.Storage
@@ -96,6 +97,15 @@ class GCStorageStorageService(
         LOG.info("Deleting $key from gcp bucket")
         val blobId: BlobId = BlobId.of(config.bucket, key)
         return withContext(Dispatchers.IO) { storage.delete(blobId) }
+    }
+
+    suspend fun readFile(uri: URI): Blob {
+        val key = makeKey(uri)
+        LOG.info("Reading $key from gcp bucket")
+        val blobId: BlobId = BlobId.of(config.bucket, key)
+        return withContext(Dispatchers.IO) {
+            storage.get(blobId)
+        }
     }
 
 }

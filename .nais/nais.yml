@@ -22,7 +22,7 @@ spec:
     cpuThresholdPercentage: 50
   resources:
     limits:
-      memory: 1536Mi
+      memory: 4096Mi
     requests:
       cpu: 200m
       memory: 128Mi
@@ -82,3 +82,4 @@ spec:
       rules:
         - application: hm-grunndata-register
         - application: hm-grunndata-import
+        - application: hm-grunndata-media-proxy
