@@ -83,6 +83,7 @@ gcp:
 
 media:
   storage:
+    uploadSkipDatabase: ${MEDIA_STORAGE_UPLOAD_SKIP_DATABASE:false}
     enabled: ${MEDIA_STORAGE_ENABLED:false}
     retention: ${MEDIA_STORAGE_RETENTION:365d}
     cdnurl: ${MEDIA_STORAGE_CDNURL:`http://localhost:8080/local`}

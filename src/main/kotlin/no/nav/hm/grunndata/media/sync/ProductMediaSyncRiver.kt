@@ -6,6 +6,7 @@ import io.micronaut.context.annotation.Requires
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.rapids_rivers.*
 import no.nav.hm.grunndata.media.model.MediaRepository
+import no.nav.hm.grunndata.media.storage.MediaStorageConfig
 import no.nav.hm.grunndata.rapid.dto.ProductRapidDTO
 import no.nav.hm.grunndata.rapid.dto.rapidDTOVersion
 import no.nav.hm.grunndata.rapid.event.EventName
@@ -19,7 +20,8 @@ class MediaSyncRiver(
     river: RiverHead,
     private val objectMapper: ObjectMapper,
     private val mediaRepository: MediaRepository,
-    private val mediaHandler: MediaHandler
+    private val mediaHandler: MediaHandler,
+    private val mediaStorageConfig: MediaStorageConfig,
 ) : River.PacketListener {
 
     companion object {
@@ -46,12 +48,18 @@ class MediaSyncRiver(
         val createdTime = packet["createdTime"].asLocalDateTime()
         LOG.info("Got eventId: $eventId for product ${dto.id} createdTime: $createdTime")
         runBlocking {
-            val mediaStateList = mediaRepository.findByOid(dto.id).sortedBy { it.updated }
             val dtoMediaList = dto.media
-            if (mediaStateList.isEmpty() || createdTime.isAfter(mediaStateList.last().updated)) {
-                mediaHandler.compareAndPersistMedia(dtoMediaList, mediaStateList, dto.id)
-            } else {
-                LOG.info("Skip this event cause event created time : $createdTime is older than ${mediaStateList.last().updated}")
+            if (mediaStorageConfig.uploadSkipDatabase) {
+                LOG.info("Skip database update and upload media to storage")
+                mediaHandler.uploadSkipDatabaseUpdate(dtoMediaList)
+            }
+            else {
+                val mediaStateList = mediaRepository.findByOid(dto.id).sortedBy { it.updated }
+                if (mediaStateList.isEmpty() || createdTime.isAfter(mediaStateList.last().updated)) {
+                    mediaHandler.compareAndPersistMedia(dtoMediaList, mediaStateList, dto.id)
+                } else {
+                    LOG.info("Skip this event cause event created time : $createdTime is older than ${mediaStateList.last().updated}")
+                }
             }
         }
     }

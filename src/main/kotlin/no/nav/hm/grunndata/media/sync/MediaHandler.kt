@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional
 import no.nav.hm.grunndata.media.model.Media
 import no.nav.hm.grunndata.media.model.MediaRepository
 import no.nav.hm.grunndata.media.model.MediaStatus
+import no.nav.hm.grunndata.media.storage.StorageResponse
 import no.nav.hm.grunndata.media.storage.StorageService
 import no.nav.hm.grunndata.rapid.dto.MediaInfo
 import no.nav.hm.grunndata.rapid.dto.MediaSourceType
@@ -19,7 +20,6 @@ open class MediaHandler(
     private val mediaRepository: MediaRepository,
     private val storageService: StorageService
 ) {
-
 
     companion object {
         private val LOG = LoggerFactory.getLogger(MediaHandler::class.java)
@@ -93,18 +93,17 @@ open class MediaHandler(
         }
     }
 
+    // used when we just want to upload, and dont care about database.
+    suspend fun uploadSkipDatabaseUpdate(mediaInfos: Set<MediaInfo>) {
+       mediaInfos.forEach {
+            if (it.source != MediaSourceType.EXTERNALURL) // skip external urls
+                uploadToStorage(it)
+       }
+    }
+
     private suspend fun uploadAndCreateMedia(mediaInfo: MediaInfo,
                                              oid: UUID) {
-        val sourceUri = URI(mediaInfo.sourceUri)
-        val destinationURI = URI(mediaInfo.uri)
-        val contentType = sourceUri.getContentType()
-        LOG.info("uploading file to $destinationURI with content type $contentType")
-        val upload =
-            storageService.uploadStream(
-                sourceUri = sourceUri,
-                destinationUri = destinationURI,
-                contentType = contentType
-            )
+        val upload = uploadToStorage(mediaInfo)
         mediaRepository.save(
             Media(
                 id = UUID.randomUUID(),
@@ -121,6 +120,19 @@ open class MediaHandler(
         )
     }
 
+    private suspend fun uploadToStorage(mediaInfo: MediaInfo): StorageResponse {
+        val sourceUri = URI(mediaInfo.sourceUri)
+        val destinationURI = URI(mediaInfo.uri)
+        val contentType = sourceUri.getContentType()
+        LOG.info("uploading file to $destinationURI with content type $contentType")
+        val upload =
+            storageService.uploadStream(
+                sourceUri = sourceUri,
+                destinationUri = destinationURI,
+                contentType = contentType
+            )
+        return upload
+    }
 
 }
 
