@@ -12,6 +12,9 @@ micronaut:
     name: hm-grunndata-media
     thread-selection: auto
   executors:
+    io:
+      type: fixed
+      nThreads: 128
     consumer:
       type: fixed
       nThreads: 1
