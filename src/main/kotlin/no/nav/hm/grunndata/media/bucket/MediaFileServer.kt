@@ -11,7 +11,7 @@ import java.net.URI
 @Controller("/internal/media/file")
 class MediaFileServer(private val gcStorageStorageService: GCStorageStorageService) {
 
-    @Get("/{uri}", produces = [MediaType.APPLICATION_OCTET_STREAM])
+    @Get("/{uri:.*}", produces = [MediaType.APPLICATION_OCTET_STREAM])
     suspend fun getFile(uri: String): HttpResponse<StreamedFile> {
         val blob = gcStorageStorageService.readFile(URI.create(uri))
         return HttpResponse.ok(StreamedFile(blob.getContent().inputStream(), MediaType.of(blob.contentType)))
