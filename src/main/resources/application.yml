@@ -1,9 +1,9 @@
 micronaut:
   server:
     multipart:
-      max-file-size: 10000000
+      max-file-size: 20000000
     port: ${SERVER_PORT:8080}
-    max-request-size: 10000000
+    max-request-size: 20000000
   object-storage:
     gcp:
       default:
