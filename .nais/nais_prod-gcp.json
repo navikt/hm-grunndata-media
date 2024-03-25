@@ -6,9 +6,9 @@
   "min_replicas": 2,
   "max_replicas": 2,
   "schedulers_enabled": true,
-  "bucket_name": "nais-cdn-nav-teamdigihot-6a0e",
+  "bucket_name": "hm-grunndata-media-prod",
   "media_storage_enabled": true,
-  "media_storage_cdnurl": "https://cdn.nav.no/teamdigihot/grunndata/media/v1",
+  "media_storage_cdnurl": "https://finnhelpemiddel.nav.no/imageproxy/file",
   "java_opts": "-Xms128m -Xmx2048m",
   "media_storage_retention": "365d"
 }
