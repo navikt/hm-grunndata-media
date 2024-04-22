@@ -33,13 +33,15 @@ open class MediaHandler(
     ) {
         val newMediaList = mediaInfoList.filter { m -> mediaInDbList.none { m.uri == it.uri } }
         val notInUseList = mediaInDbList.filter { n -> mediaInfoList.none { n.uri == it.uri } }
-        val reActiveList = mediaInDbList.filter { m -> mediaInfoList.any { m.uri == it.uri && m.status == MediaStatus.INACTIVE } }
+        val reActiveList = mediaInDbList.filter { inDb -> mediaInfoList.any { inDb.uri == it.uri && it.updated.isAfter(inDb.updated) } }
         LOG.info("Got ${newMediaList.size} new files and ${notInUseList.size} files to be deactivated and ${reActiveList.size} to be reactivated for $oid")
         notInUseList.forEach {
             if (it.status == MediaStatus.ACTIVE)
                 mediaRepository.update(it.copy(status = MediaStatus.INACTIVE, updated = LocalDateTime.now()))
         }
         reActiveList.forEach {
+            LOG.info("Got new updated media for $oid with uri: ${it.uri} reuploading")
+            uploadToStorage(it)
             mediaRepository.update(it.copy(status = MediaStatus.ACTIVE, updated = LocalDateTime.now()))
         }
         newMediaList.forEach {
@@ -101,6 +103,20 @@ open class MediaHandler(
        }
     }
 
+    private suspend fun uploadToStorage(media: Media): StorageResponse {
+        val sourceUri = URI(media.sourceUri)
+        val destinationURI = URI(media.uri)
+        val contentType = sourceUri.getContentType()
+        LOG.info("uploading file to $destinationURI with content type $contentType")
+        val upload =
+            storageService.uploadStream(
+                sourceUri = sourceUri,
+                destinationUri = destinationURI,
+                contentType = contentType
+            )
+        return upload
+    }
+
     private suspend fun uploadAndCreateMedia(mediaInfo: MediaInfo,
                                              oid: UUID) {
         val upload = uploadToStorage(mediaInfo)
@@ -115,7 +131,7 @@ open class MediaHandler(
                 sourceUri = mediaInfo.sourceUri,
                 source = mediaInfo.source,
                 md5 = upload.md5hash,
-                status = MediaStatus.ACTIVE,
+                status = MediaStatus.ACTIVE
             )
         )
     }
