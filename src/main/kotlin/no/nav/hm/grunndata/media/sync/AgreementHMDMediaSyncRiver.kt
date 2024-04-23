@@ -48,8 +48,8 @@ class AgreementHMDMediaSyncRiver(
         val dto = objectMapper.treeToValue(packet["payload"], AgreementDTO::class.java)
         LOG.info("Got eventId: $eventId for agreement ${dto.id}")
         runBlocking {
-            // hack to allow for re-downloading pdfs
-            mediaRepository.deleteByOid(dto.id)
+            // remove the hack, we now support redownload of new media
+            //mediaRepository.deleteByOid(dto.id)
             val inDbList = mediaRepository.findByOid(dto.id)
             val mediaInfoList = dto.attachments.flatMap { it.media }.toSet()
             mediaHandler.compareAndPersistMedia(mediaInfoList, inDbList, dto.id)
