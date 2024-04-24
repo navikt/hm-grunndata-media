@@ -8,7 +8,7 @@
   "schedulers_enabled": true,
   "bucket_name": "hm-grunndata-media-prod",
   "media_storage_enabled": true,
-  "media_storage_cdnurl": "https://finnhelpemiddel.nav.no/imageproxy/file",
+  "media_storage_cdnurl": "https://finnhjelpemiddel.nav.no/imageproxy/file",
   "java_opts": "-Xms128m -Xmx2048m",
   "media_storage_retention": "365d"
 }
