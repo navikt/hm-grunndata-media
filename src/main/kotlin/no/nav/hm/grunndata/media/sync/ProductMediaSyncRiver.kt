@@ -21,6 +21,7 @@ class MediaSyncRiver(
     private val objectMapper: ObjectMapper,
     private val mediaRepository: MediaRepository,
     private val mediaHandler: MediaHandler,
+    private val mediaUriHandler: MediaUriHandler,
     private val mediaStorageConfig: MediaStorageConfig,
 ) : River.PacketListener {
 
@@ -60,6 +61,9 @@ class MediaSyncRiver(
                 } else {
                     LOG.info("Skip this event cause event created time : $createdTime is older than ${mediaStateList.last().updated}")
                 }
+                // temporally migrate to new table
+                val inDbList = mediaRepository.findByOid(dto.id)
+                mediaUriHandler.migrateProductToMediaUri(dto,inDbList)
             }
         }
     }

@@ -22,6 +22,7 @@ class AgreementHMDMediaSyncRiver(
     river: RiverHead,
     private val objectMapper: ObjectMapper,
     private val mediaRepository: MediaRepository,
+    private val mediaUriHandler: MediaUriHandler,
     private val mediaHandler: MediaHandler
 ) : River.PacketListener {
 
@@ -53,6 +54,9 @@ class AgreementHMDMediaSyncRiver(
             val inDbList = mediaRepository.findByOid(dto.id)
             val mediaInfoList = dto.attachments.flatMap { it.media }.toSet()
             mediaHandler.compareAndPersistMedia(mediaInfoList, inDbList, dto.id)
+            // migrate to new media uri
+            val updatedList = mediaRepository.findByOid(dto.id)
+            mediaUriHandler.migrateAgreementToMediaUri(dto, updatedList)
         }
     }
 

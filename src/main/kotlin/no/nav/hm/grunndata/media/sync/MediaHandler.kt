@@ -39,11 +39,12 @@ open class MediaHandler(
             if (it.status == MediaStatus.ACTIVE)
                 mediaRepository.update(it.copy(status = MediaStatus.INACTIVE, updated = LocalDateTime.now()))
         }
-        reActiveList.forEach {
-            LOG.info("Got new updated media for $oid with uri: ${it.uri} reuploading")
-            uploadToStorage(it)
-            mediaRepository.update(it.copy(status = MediaStatus.ACTIVE, updated = LocalDateTime.now()))
-        }
+        // disable while we migrate to new table
+//        reActiveList.forEach {
+//            LOG.info("Got new updated media for $oid with uri: ${it.uri} reuploading")
+//            uploadToStorage(it)
+//            mediaRepository.update(it.copy(status = MediaStatus.ACTIVE, updated = LocalDateTime.now()))
+//        }
         newMediaList.forEach {
             LOG.info("Got new media for $oid with uri ${it.uri}")
             if (it.source!=MediaSourceType.EXTERNALURL) {

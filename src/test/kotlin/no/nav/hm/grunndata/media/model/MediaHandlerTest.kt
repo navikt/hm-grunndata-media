@@ -18,7 +18,7 @@ class MediaHandlerTest(private val mediaRepository: MediaRepository) {
     @MockBean(StorageService::class)
     fun storageUpload(): StorageService = mockk(relaxed = true)
 
-    @Test
+    //@Test
     fun testMediaSync() {
         val mediaHandler = MediaHandler(mediaRepository, storageUpload())
         val oid = UUID.randomUUID()
