@@ -17,7 +17,15 @@ class MediaUriHandler(private val mediaUriRepository: MediaUriRepository) {
     }
     suspend fun migrateProductToMediaUri(dto: ProductRapidDTO, inDbList: List<Media>) {
         inDbList.forEach {
-            mediaUriRepository.findByUri(it.uri ) ?: run {
+            mediaUriRepository.findByUri(it.uri )?.let {inDb->
+                mediaUriRepository.update(
+                    inDb.copy(
+                        size = it.size,
+                        md5 = it.md5,
+                        updated = it.updated
+                    )
+                )
+            } ?: run {
                 LOG.info("Migrating uri ${it.uri} for series ${dto.seriesUUID}")
                 mediaUriRepository.save(MediaUri (
                     uri = it.uri,
@@ -38,7 +46,15 @@ class MediaUriHandler(private val mediaUriRepository: MediaUriRepository) {
 
     suspend fun migrateAgreementToMediaUri(dto: AgreementDTO, inDbList: List<Media>) {
         inDbList.forEach {
-            mediaUriRepository.findByUri(it.uri) ?: run {
+            mediaUriRepository.findByUri(it.uri)?.let { inDb->
+                mediaUriRepository.update(
+                    inDb.copy(
+                        size = it.size,
+                        md5 = it.md5,
+                        updated = it.updated
+                    )
+                )
+            } ?: run {
                 LOG.info("Migrating uri ${it.uri} for agreement ${dto.id}")
                 mediaUriRepository.save(MediaUri (
                     uri = it.uri,
