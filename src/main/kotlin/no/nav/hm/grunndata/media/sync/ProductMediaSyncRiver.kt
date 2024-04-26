@@ -50,7 +50,7 @@ class MediaSyncRiver(
         LOG.info("Got eventId: $eventId for product ${dto.id} createdTime: $createdTime")
         runBlocking {
             val dtoMediaList = dto.media
-            val mediaStateList = mediaUriRepository.findByOid(dto.id).sortedBy { it.updated }
+            val mediaStateList = mediaUriRepository.findByOid(dto.seriesUUID!!).sortedBy { it.updated }
             if (mediaStateList.isEmpty() || createdTime.isAfter(mediaStateList.last().updated)) {
                 mediaUriHandler.compareAndPersistMedia(dtoMediaList, mediaStateList, dto.seriesUUID!!, ObjectType.SERIES)
             } else {
