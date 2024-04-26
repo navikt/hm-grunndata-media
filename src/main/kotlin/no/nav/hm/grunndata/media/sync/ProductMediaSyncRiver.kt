@@ -5,7 +5,8 @@ import io.micronaut.context.annotation.Context
 import io.micronaut.context.annotation.Requires
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.rapids_rivers.*
-import no.nav.hm.grunndata.media.model.MediaRepository
+import no.nav.hm.grunndata.media.model.MediaUriRepository
+import no.nav.hm.grunndata.media.model.ObjectType
 import no.nav.hm.grunndata.media.storage.MediaStorageConfig
 import no.nav.hm.grunndata.rapid.dto.ProductRapidDTO
 import no.nav.hm.grunndata.rapid.dto.rapidDTOVersion
@@ -19,8 +20,7 @@ import org.slf4j.LoggerFactory
 class MediaSyncRiver(
     river: RiverHead,
     private val objectMapper: ObjectMapper,
-    private val mediaRepository: MediaRepository,
-    private val mediaHandler: MediaHandler,
+    private val mediaUriRepository: MediaUriRepository,
     private val mediaUriHandler: MediaUriHandler,
     private val mediaStorageConfig: MediaStorageConfig,
 ) : River.PacketListener {
@@ -33,7 +33,7 @@ class MediaSyncRiver(
         LOG.info("Using Rapid DTO version $rapidDTOVersion")
         river
             .validate { it.demandValue("createdBy", RapidApp.grunndata_db) }
-            .validate { it.demandAny("eventName", listOf(EventName.hmdbproductsyncV1, EventName.syncedRegisterProductV1)) }
+            .validate { it.demandAny("eventName", listOf(EventName.hmdbproductsyncV1)) }
             .validate { it.demandKey("eventId") }
             .validate { it.demandKey("payload") }
             .validate { it.demandKey("dtoVersion") }
@@ -50,21 +50,13 @@ class MediaSyncRiver(
         LOG.info("Got eventId: $eventId for product ${dto.id} createdTime: $createdTime")
         runBlocking {
             val dtoMediaList = dto.media
-            if (mediaStorageConfig.uploadSkipDatabase) {
-                LOG.info("Skip database update and upload media to storage")
-                mediaHandler.uploadSkipDatabaseUpdate(dtoMediaList)
+            val mediaStateList = mediaUriRepository.findByOid(dto.id).sortedBy { it.updated }
+            if (mediaStateList.isEmpty() || createdTime.isAfter(mediaStateList.last().updated)) {
+                mediaUriHandler.compareAndPersistMedia(dtoMediaList, mediaStateList, dto.seriesUUID!!, ObjectType.SERIES)
+            } else {
+                LOG.info("Skip this event cause event created time : $createdTime is older than ${mediaStateList.last().updated}")
             }
-            else {
-                val mediaStateList = mediaRepository.findByOid(dto.id).sortedBy { it.updated }
-                if (mediaStateList.isEmpty() || createdTime.isAfter(mediaStateList.last().updated)) {
-                    mediaHandler.compareAndPersistMedia(dtoMediaList, mediaStateList, dto.id)
-                } else {
-                    LOG.info("Skip this event cause event created time : $createdTime is older than ${mediaStateList.last().updated}")
-                }
-                // temporally migrate to new table
-                val inDbList = mediaRepository.findByOid(dto.id)
-                mediaUriHandler.migrateProductToMediaUri(dto,inDbList)
-            }
+
         }
     }
 

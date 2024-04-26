@@ -8,7 +8,8 @@ import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.KafkaRapid
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.River
-import no.nav.hm.grunndata.media.model.MediaRepository
+import no.nav.hm.grunndata.media.model.MediaUriRepository
+import no.nav.hm.grunndata.media.model.ObjectType
 import no.nav.hm.grunndata.rapid.dto.AgreementDTO
 import no.nav.hm.grunndata.rapid.dto.rapidDTOVersion
 import no.nav.hm.grunndata.rapid.event.EventName
@@ -21,8 +22,8 @@ import org.slf4j.LoggerFactory
 class AgreementMediaSyncRiver(
     river: RiverHead,
     private val objectMapper: ObjectMapper,
-    private val mediaRepository: MediaRepository,
-    private val mediaHandler: MediaHandler
+    private val mediaUriRepository: MediaUriRepository,
+    private val mediaUriHandler: MediaUriHandler
 ) : River.PacketListener {
 
     companion object {
@@ -42,15 +43,14 @@ class AgreementMediaSyncRiver(
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         val eventId = packet["eventId"].asText()
-
         val dtoVersion = packet["dtoVersion"].asLong()
         if (dtoVersion > rapidDTOVersion) LOG.warn("dto version $dtoVersion is newer than $rapidDTOVersion")
         val dto = objectMapper.treeToValue(packet["payload"], AgreementDTO::class.java)
         LOG.info("Got eventId: $eventId for agreement ${dto.id}")
         runBlocking {
-            val inDbList = mediaRepository.findByOid(dto.id)
+            val inDbList = mediaUriRepository.findByOid(dto.id)
             val mediaInfoList = dto.attachments.flatMap { it.media }.toSet()
-            mediaHandler.compareAndPersistMedia(mediaInfoList, inDbList, dto.id)
+            mediaUriHandler.compareAndPersistMedia(mediaInfoList, inDbList, dto.id, ObjectType.AGREEMENT)
         }
     }
 

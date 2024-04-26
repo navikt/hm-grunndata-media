@@ -8,7 +8,8 @@ import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.KafkaRapid
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.River
-import no.nav.hm.grunndata.media.model.MediaRepository
+import no.nav.hm.grunndata.media.model.MediaUriRepository
+import no.nav.hm.grunndata.media.model.ObjectType
 import no.nav.hm.grunndata.rapid.dto.AgreementDTO
 import no.nav.hm.grunndata.rapid.dto.rapidDTOVersion
 import no.nav.hm.grunndata.rapid.event.EventName
@@ -21,9 +22,8 @@ import org.slf4j.LoggerFactory
 class AgreementHMDMediaSyncRiver(
     river: RiverHead,
     private val objectMapper: ObjectMapper,
-    private val mediaRepository: MediaRepository,
+    private val mediaUriRepository: MediaUriRepository,
     private val mediaUriHandler: MediaUriHandler,
-    private val mediaHandler: MediaHandler
 ) : River.PacketListener {
 
     companion object {
@@ -49,14 +49,9 @@ class AgreementHMDMediaSyncRiver(
         val dto = objectMapper.treeToValue(packet["payload"], AgreementDTO::class.java)
         LOG.info("Got eventId: $eventId for agreement ${dto.id}")
         runBlocking {
-            // remove the hack, we now support redownload of new media
-            //mediaRepository.deleteByOid(dto.id)
-            val inDbList = mediaRepository.findByOid(dto.id)
+            val inDbList = mediaUriRepository.findByOid(dto.id)
             val mediaInfoList = dto.attachments.flatMap { it.media }.toSet()
-            mediaHandler.compareAndPersistMedia(mediaInfoList, inDbList, dto.id)
-            // migrate to new media uri
-            val updatedList = mediaRepository.findByOid(dto.id)
-            mediaUriHandler.migrateAgreementToMediaUri(dto, updatedList)
+            mediaUriHandler.compareAndPersistMedia(mediaInfoList, inDbList, dto.id, ObjectType.AGREEMENT)
         }
     }
 

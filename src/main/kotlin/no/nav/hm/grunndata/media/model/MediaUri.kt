@@ -31,5 +31,3 @@ enum class ObjectType {
     AGREEMENT,
     UNKNOWN
 }
-
-
