@@ -4,14 +4,16 @@ import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Delete
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Post
+import io.micronaut.http.annotation.QueryValue
 import io.micronaut.http.multipart.CompletedFileUpload
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
-import no.nav.hm.grunndata.media.model.Media
-import no.nav.hm.grunndata.media.model.MediaDTO
-import no.nav.hm.grunndata.media.model.MediaRepository
 import no.nav.hm.grunndata.media.model.MediaStatus
+import no.nav.hm.grunndata.media.model.MediaUri
+import no.nav.hm.grunndata.media.model.MediaUriDTO
+import no.nav.hm.grunndata.media.model.MediaUriRepository
+import no.nav.hm.grunndata.media.model.ObjectType
 import no.nav.hm.grunndata.media.model.toDTO
 import no.nav.hm.grunndata.media.storage.UploadMediaController.Companion.V1_UPLOAD_MEDIA
 import no.nav.hm.grunndata.media.sync.BadRequestException
@@ -27,7 +29,7 @@ import java.util.UUID
 @Controller(V1_UPLOAD_MEDIA)
 class UploadMediaController(
     private val storageService: StorageService,
-    private val mediaRepository: MediaRepository,
+    private val mediaUriRepository: MediaUriRepository,
     private val mediaStorageConfig: MediaStorageConfig
 ) {
 
@@ -39,9 +41,9 @@ class UploadMediaController(
     }
 
     @Get("/{app}/oid/{oid}")
-    suspend fun getMediaByOid(app: String, oid: UUID): List<MediaDTO> {
+    suspend fun getMediaByOid(app: String, oid: UUID): List<MediaUriDTO> {
         LOG.info("Got request for media list of oid $oid from $app")
-        return mediaRepository.findByOid(oid).map { it.toDTO() }
+        return mediaUriRepository.findByOid(oid).map { it.toDTO() }
     }
 
     @Post(
@@ -51,16 +53,37 @@ class UploadMediaController(
     )
     suspend fun uploadFile(
         oid: UUID, app: String,
-        file: CompletedFileUpload
-    ): MediaDTO {
-        return uploadToStorage(file, app, oid)
+        file: CompletedFileUpload, @QueryValue objectType: ObjectType = ObjectType.PRODUCT
+    ): MediaUriDTO {
+        return uploadToStorage(file, app, oid, objectType)
     }
+
+
+    @Delete("/{app}/{oid}/{uri}")
+    suspend fun deleteByOidAndUri(app: String, oid: UUID, uri: String): MediaUriDTO =
+        mediaUriRepository.findByOidAndUri(oid, uri)?.let {
+            LOG.info("Got deleted request from $app for $oid and $uri")
+            mediaUriRepository.update(it.copy(status = MediaStatus.DELETED, updated = LocalDateTime.now())).toDTO()
+        } ?: throw BadRequestException("Not found $oid and $uri")
+
+
+    @Post(
+        uri = "/{app}/files/{oid}",
+        consumes = [io.micronaut.http.MediaType.MULTIPART_FORM_DATA],
+        produces = [io.micronaut.http.MediaType.APPLICATION_JSON]
+    )
+    suspend fun uploadFiles(
+        oid: UUID, app: String,
+        files: Publisher<CompletedFileUpload>
+    ): List<MediaUriDTO> =
+        files.asFlow().map { uploadToStorage(it, app, oid) }.toList()
+
 
     private suspend fun uploadToStorage(
         file: CompletedFileUpload, app: String,
-        oid: UUID
-    ): MediaDTO {
-        LOG.info("Got request to upload file for ${file.name} oid: $oid and $app")
+        oid: UUID, objectType: ObjectType = ObjectType.UNKNOWN
+    ): MediaUriDTO {
+        LOG.info("Got request to upload file for ${file.name} app: $app, oid: $oid and objectType: $objectType")
         val type = getMediaType(file)
         if (type == MediaType.OTHER) throw UknownMediaSource("only png, jpg, pdf is supported")
         val extension = getMediaExtension(file.extension)
@@ -70,14 +93,14 @@ class UploadMediaController(
         LOG.info("Got file ${file.filename} with uri: $uri and size: ${file.size} for $oid")
         val source = if (app == REGISTER_UPLOAD_PREFIX) MediaSourceType.REGISTER else MediaSourceType.IMPORT
         val response = storageService.uploadFile(file, URI(uri))
-        return mediaRepository.save(
-            Media(
-                id = id,
+        return mediaUriRepository.save(
+            MediaUri(
                 oid = oid,
                 filename = file.filename,
                 uri = uri,
                 sourceUri = "${mediaStorageConfig.cdnurl}/$uri",
                 type = type,
+                objectType = objectType,
                 size = response.size,
                 status = MediaStatus.ACTIVE,
                 md5 = response.md5hash,
@@ -95,24 +118,10 @@ class UploadMediaController(
         }
     }
 
-    @Post(
-        uri = "/{app}/files/{oid}",
-        consumes = [io.micronaut.http.MediaType.MULTIPART_FORM_DATA],
-        produces = [io.micronaut.http.MediaType.APPLICATION_JSON]
-    )
-    suspend fun uploadFiles(
-        oid: UUID, app: String,
-        files: Publisher<CompletedFileUpload>
-    ): List<MediaDTO> =
-        files.asFlow().map { uploadToStorage(it, app, oid) }.toList()
 
 
-    @Delete("/{app}/{oid}/{uri}")
-    suspend fun deleteByOidAndUri(app: String, oid: UUID, uri: String): MediaDTO =
-        mediaRepository.findByOidAndUri(oid, uri)?.let {
-            LOG.info("Got deleted request from $app for $oid and $uri")
-            mediaRepository.update(it.copy(status = MediaStatus.DELETED, updated = LocalDateTime.now())).toDTO()
-        } ?: throw BadRequestException("Not found $oid and $uri")
+
+
 
 
     private fun getMediaType(file: CompletedFileUpload): MediaType {

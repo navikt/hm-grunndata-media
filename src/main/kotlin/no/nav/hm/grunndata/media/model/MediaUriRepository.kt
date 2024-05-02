@@ -12,6 +12,9 @@ interface MediaUriRepository: CoroutinePageableCrudRepository<MediaUri, String>,
     CoroutineJpaSpecificationExecutor<String> {
 
         suspend fun findByOid(oid: UUID): List<MediaUri>
+
+        suspend fun findByOidAndUri(oid:UUID, uri: String): MediaUri?
+
         suspend fun findByUri(uri: String): MediaUri?
 
 

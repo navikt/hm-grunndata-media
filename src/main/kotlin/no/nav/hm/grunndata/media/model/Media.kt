@@ -57,6 +57,7 @@ data class MediaDTO(
     val filename: String?= null,
     val uri: String,
     val sourceUri: String,
+    val objectType: ObjectType?=null,
     val type: MediaType = MediaType.IMAGE,
     val size: Long,
     val md5: String,
