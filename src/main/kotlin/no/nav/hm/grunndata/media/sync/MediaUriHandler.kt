@@ -40,7 +40,7 @@ open class MediaUriHandler(private val mediaUriRepository: MediaUriRepository,
         }
         reActiveList.forEach {
             LOG.info("Got new updated media for $oid with uri: ${it.uri} reuploading")
-            uploadToStorage(it.sourceUri, it.uri)
+            if (it.source==MediaSourceType.HMDB) uploadToStorage(it.sourceUri, it.uri) // reload only if HMDB
             mediaUriRepository.update(it.copy(status = MediaStatus.ACTIVE, updated = LocalDateTime.now()))
         }
         newMediaList.forEach {
