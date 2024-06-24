@@ -22,7 +22,7 @@ version = properties["version"] ?: "local-build"
 
 plugins {
     kotlin("jvm") version "1.9.20"
-    kotlin("kapt") version "1.8.20"
+    kotlin("kapt") version "1.9.20"
     id("java")
     id("com.github.johnrengelman.shadow") version "7.1.0"
     id("io.micronaut.application") version "4.4.0"
@@ -122,7 +122,7 @@ tasks.withType<Test> {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "8.0.1"
+    gradleVersion = "8.5"
 }
 
 repositories {
