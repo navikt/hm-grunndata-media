@@ -2,7 +2,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val jvmTarget = "17"
-val micronautVersion = "4.4.2"
+val micronautVersion = "4.5.0"
 val kafkaVersion = "3.2.1"
 val micrometerRegistryPrometheusVersion = "1.9.1"
 val junitJupiterVersion = "5.9.2"
@@ -25,7 +25,7 @@ plugins {
     kotlin("kapt") version "1.8.20"
     id("java")
     id("com.github.johnrengelman.shadow") version "7.1.0"
-    id("io.micronaut.application") version "4.3.3"
+    id("io.micronaut.application") version "4.4.0"
 }
 
 configurations.all {
