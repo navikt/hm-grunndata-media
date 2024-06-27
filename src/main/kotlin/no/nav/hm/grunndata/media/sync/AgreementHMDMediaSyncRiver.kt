@@ -49,6 +49,7 @@ class AgreementHMDMediaSyncRiver(
         val dto = objectMapper.treeToValue(packet["payload"], AgreementDTO::class.java)
         LOG.info("Got eventId: $eventId for agreement ${dto.id}")
         runBlocking {
+            mediaUriRepository.deleteByOid(dto.id)
             val inDbList = mediaUriRepository.findByOid(dto.id)
             val mediaInfoList = dto.attachments.flatMap { it.media }.toSet()
             mediaUriHandler.compareAndPersistMedia(mediaInfoList, inDbList, dto.id, ObjectType.AGREEMENT)
