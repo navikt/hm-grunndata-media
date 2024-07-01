@@ -13,7 +13,7 @@ val tcVersion = "1.17.6"
 val mockkVersion = "1.13.4"
 val kotestVersion = "5.5.5"
 val jakartaPersistenceVersion = "3.1.0"
-val rapidsRiversVersion = "202401101532"
+val rapidsRiversVersion = "202407010855"
 val grunndataDtoVersion = "202406251104"
 
 
@@ -76,6 +76,7 @@ dependencies {
     // Rapids and Rivers
     implementation("com.github.navikt:hm-rapids-and-rivers-v2-core:$rapidsRiversVersion")
     implementation("com.github.navikt:hm-rapids-and-rivers-v2-micronaut:$rapidsRiversVersion")
+    implementation("com.github.navikt:hm-rapids-and-rivers-v2-micronaut-deadletter:$rapidsRiversVersion")
     implementation("no.nav.hm.grunndata:hm-grunndata-rapid-dto:$grunndataDtoVersion")
     implementation("org.flywaydb:flyway-database-postgresql:10.6.0")
 }
