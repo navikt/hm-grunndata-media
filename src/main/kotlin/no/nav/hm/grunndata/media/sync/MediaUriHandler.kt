@@ -40,35 +40,13 @@ open class MediaUriHandler(private val mediaUriRepository: MediaUriRepository,
         }
         reActiveList.forEach {
             LOG.info("Got new updated media for $oid with uri: ${it.uri} reuploading")
-            if (it.source==MediaSourceType.HMDB) uploadToStorage(it.sourceUri, it.uri) // reload only if HMDB
             mediaUriRepository.update(it.copy(status = MediaStatus.ACTIVE, updated = LocalDateTime.now()))
         }
         newMediaList.forEach {
             LOG.info("Got new media for $oid with uri ${it.uri}")
             if (it.source!= MediaSourceType.EXTERNALURL) {
-                // upload and save
-                try {
-                    uploadAndCreateMedia(it, oid, objectType)
-                } catch (e: Exception) {
-                    LOG.error(
-                        """Got exception while trying to upload sourceUri: ${it.sourceUri}, uri: ${it.uri} with text: "${it.text}" to cloud""",
-                        e
-                    )
-                    mediaUriRepository.save(
-                        MediaUri(
-                            filename = it.uri,
-                            uri = it.uri,
-                            oid = oid,
-                            size = 0,
-                            type = it.type,
-                            status = MediaStatus.ERROR,
-                            source = it.source,
-                            objectType = objectType,
-                            md5 = "",
-                            sourceUri = it.sourceUri
-                        )
-                    )
-                }
+                LOG.warn("we have turn of HMDB, should never end up uploading media ${it.uri} ${it.type} ${it.sourceUri}, ")
+                //uploadAndCreateMedia(it, oid, objectType)
             }
             else LOG.info("media is external url, skip handling this ${it.uri} ${it.type}")
         }
@@ -97,7 +75,7 @@ open class MediaUriHandler(private val mediaUriRepository: MediaUriRepository,
                 filename = mediaInfo.uri,
                 uri = mediaInfo.uri,
                 oid = oid,
-                size = upload.size,
+                size = 0,
                 type = mediaInfo.type,
                 sourceUri = mediaInfo.sourceUri,
                 source = mediaInfo.source,

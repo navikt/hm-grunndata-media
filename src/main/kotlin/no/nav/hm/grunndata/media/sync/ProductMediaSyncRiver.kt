@@ -9,6 +9,7 @@ import no.nav.hm.grunndata.media.model.MediaUriRepository
 import no.nav.hm.grunndata.media.model.ObjectType
 import no.nav.hm.grunndata.media.storage.MediaStorageConfig
 import no.nav.hm.grunndata.rapid.dto.ProductRapidDTO
+import no.nav.hm.grunndata.rapid.dto.SeriesRapidDTO
 import no.nav.hm.grunndata.rapid.dto.rapidDTOVersion
 import no.nav.hm.grunndata.rapid.event.EventName
 import no.nav.hm.grunndata.rapid.event.RapidApp
@@ -33,7 +34,7 @@ class MediaSyncRiver(
         LOG.info("Using Rapid DTO version $rapidDTOVersion")
         river
             .validate { it.demandValue("createdBy", RapidApp.grunndata_db) }
-            .validate { it.demandAny("eventName", listOf(EventName.hmdbproductsyncV1)) }
+            .validate { it.demandAny("eventName", listOf(EventName.syncedRegisterSeriesV1)) }
             .validate { it.demandKey("eventId") }
             .validate { it.demandKey("payload") }
             .validate { it.demandKey("dtoVersion") }
@@ -45,14 +46,14 @@ class MediaSyncRiver(
         val eventId = packet["eventId"].asText()
         val dtoVersion = packet["dtoVersion"].asLong()
         if (dtoVersion > rapidDTOVersion) LOG.warn("dto version: $dtoVersion is newer than our version: $rapidDTOVersion")
-        val dto = objectMapper.treeToValue(packet["payload"], ProductRapidDTO::class.java)
+        val dto = objectMapper.treeToValue(packet["payload"], SeriesRapidDTO::class.java)
         val createdTime = packet["createdTime"].asLocalDateTime()
         LOG.info("Got eventId: $eventId for product ${dto.id} createdTime: $createdTime")
         runBlocking {
-            val dtoMediaList = dto.media
-            val mediaStateList = mediaUriRepository.findByOid(dto.seriesUUID!!).sortedBy { it.updated }
+            val dtoMediaList = dto.seriesData?.media?.toSet() ?: emptySet()
+            val mediaStateList = mediaUriRepository.findByOid(dto.id).sortedBy { it.updated }
             if (mediaStateList.isEmpty() || createdTime.isAfter(mediaStateList.last().updated)) {
-                mediaUriHandler.compareAndPersistMedia(dtoMediaList, mediaStateList, dto.seriesUUID!!, ObjectType.SERIES)
+                mediaUriHandler.compareAndPersistMedia(dtoMediaList, mediaStateList, dto.id, ObjectType.SERIES)
             } else {
                 LOG.info("Skip this event cause event created time : $createdTime is older than ${mediaStateList.last().updated}")
             }

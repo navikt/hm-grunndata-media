@@ -69,15 +69,13 @@ class MediaHandlerTest(private val mediaUriRepository: MediaUriRepository) {
                 listOf(mediaUriRepository.save(media1), mediaUriRepository.save(media2), mediaUriRepository.save(media3),mediaUriRepository.save(media4))
             val mediaInfoList = setOf(
                 MediaInfo(uri = "1.jpg", priority = 1, text = "bilde 1", sourceUri = "1.jpg"),
-                MediaInfo(uri = "4.jpg", priority = 4, text = "bilde 4", sourceUri = "4.jpg"),
-                MediaInfo(uri = "5.jpg", priority = 5, text = "bilde 5", sourceUri = "5.jpg"),
-                MediaInfo(uri = "6.jpg", priority = 6, text = "bilde 6", sourceUri = "6.jpg")
+                MediaInfo(uri = "4.jpg", priority = 4, text = "bilde 4", sourceUri = "4.jpg")
             )
             mediaHandler.compareAndPersistMedia(mediaInfoList, mediaList, oid, ObjectType.SERIES)
             val inDb = mediaUriRepository.findByOid(oid)
             inDb.shouldNotBeNull()
-            inDb.size shouldBe 6
-            inDb.count { it.status == MediaStatus.ACTIVE } shouldBe 4
+            inDb.size shouldBe 4
+            inDb.count { it.status == MediaStatus.ACTIVE } shouldBe 2
             inDb.count { it.status == MediaStatus.INACTIVE } shouldBe 2
             inDb.filter { it.status == MediaStatus.INACTIVE }
                 .sortedBy { it.uri }
