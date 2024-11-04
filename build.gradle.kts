@@ -2,9 +2,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val jvmTarget = "17"
-val micronautVersion = "4.5.0"
-val kafkaVersion = "3.2.1"
-val micrometerRegistryPrometheusVersion = "1.9.1"
+val micronautVersion = "4.6.3"
 val junitJupiterVersion = "5.9.2"
 val logbackClassicVersion = "1.4.12"
 val logbackEncoderVersion = "7.3"
@@ -12,9 +10,8 @@ val postgresqlVersion = "42.7.2"
 val tcVersion = "1.17.6"
 val mockkVersion = "1.13.4"
 val kotestVersion = "5.5.5"
-val jakartaPersistenceVersion = "3.1.0"
-val rapidsRiversVersion = "202408280906"
-val grunndataDtoVersion = "202408281041"
+val rapidsRiversVersion = "202410290928"
+val grunndataDtoVersion = "202409181446"
 
 
 group = "no.nav.hm"
@@ -48,7 +45,7 @@ dependencies {
 
     // micronaut-data
     implementation("io.micronaut.data:micronaut-data-jdbc")
-    implementation("jakarta.persistence:jakarta.persistence-api:$jakartaPersistenceVersion")
+    implementation("jakarta.persistence:jakarta.persistence-api")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     runtimeOnly("io.micronaut.sql:micronaut-jdbc-hikari")
     kapt("io.micronaut.data:micronaut-data-processor")
