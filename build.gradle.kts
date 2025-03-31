@@ -2,7 +2,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val jvmTarget = "17"
-val micronautVersion = "4.6.3"
+val micronautVersion = "4.7.6"
 val junitJupiterVersion = "5.9.2"
 val logbackClassicVersion = "1.4.12"
 val logbackEncoderVersion = "7.3"
@@ -18,11 +18,11 @@ group = "no.nav.hm"
 version = properties["version"] ?: "local-build"
 
 plugins {
-    kotlin("jvm") version "1.9.20"
-    kotlin("kapt") version "1.9.20"
+    kotlin("jvm") version "1.9.25"
+    kotlin("kapt") version "1.9.25"
     id("java")
     id("com.github.johnrengelman.shadow") version "7.1.0"
-    id("io.micronaut.application") version "4.4.0"
+    id("io.micronaut.application") version "4.4.5"
 }
 
 configurations.all {
