@@ -9,7 +9,7 @@ val postgresqlVersion = "42.7.2"
 val tcVersion = "1.17.6"
 val mockkVersion = "1.13.4"
 val kotestVersion = "5.5.5"
-val rapidsRiversVersion = "202509151354"
+val rapidsRiversVersion = "202410290928"
 val grunndataDtoVersion = "202512030822"
 
 
@@ -20,7 +20,7 @@ plugins {
     kotlin("jvm") version "1.9.25"
     kotlin("kapt") version "1.9.25"
     id("java")
-    id("com.github.johnrengelman.shadow") version "7.1.0"
+    id("com.gradleup.shadow") version "9.2.2"
     id("io.micronaut.application") version "4.6.1"
 }
 
@@ -119,7 +119,7 @@ tasks.withType<Test> {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "8.5"
+    gradleVersion = "8.11"
 }
 
 repositories {
