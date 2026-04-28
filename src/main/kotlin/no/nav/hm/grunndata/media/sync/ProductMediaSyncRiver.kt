@@ -8,9 +8,8 @@ import no.nav.helse.rapids_rivers.*
 import no.nav.hm.grunndata.media.model.MediaUriRepository
 import no.nav.hm.grunndata.media.model.ObjectType
 import no.nav.hm.grunndata.media.storage.MediaStorageConfig
-import no.nav.hm.grunndata.rapid.dto.ProductRapidDTO
 import no.nav.hm.grunndata.rapid.dto.SeriesRapidDTO
-import no.nav.hm.grunndata.rapid.dto.rapidDTOVersion
+import no.nav.hm.grunndata.rapid.version.rapidDTOVersion
 import no.nav.hm.grunndata.rapid.event.EventName
 import no.nav.hm.grunndata.rapid.event.RapidApp
 import no.nav.hm.rapids_rivers.micronaut.RiverHead

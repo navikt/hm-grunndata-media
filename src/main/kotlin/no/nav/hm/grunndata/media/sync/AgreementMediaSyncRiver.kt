@@ -11,7 +11,7 @@ import no.nav.helse.rapids_rivers.River
 import no.nav.hm.grunndata.media.model.MediaUriRepository
 import no.nav.hm.grunndata.media.model.ObjectType
 import no.nav.hm.grunndata.rapid.dto.AgreementDTO
-import no.nav.hm.grunndata.rapid.dto.rapidDTOVersion
+import no.nav.hm.grunndata.rapid.version.rapidDTOVersion
 import no.nav.hm.grunndata.rapid.event.EventName
 import no.nav.hm.grunndata.rapid.event.RapidApp
 import no.nav.hm.rapids_rivers.micronaut.RiverHead
