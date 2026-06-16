@@ -2,10 +2,8 @@ package no.nav.hm.grunndata.media.storage
 
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import kotlinx.coroutines.runBlocking
 import no.nav.hm.grunndata.media.sync.getContentType
-import org.junit.jupiter.api.Test
 import java.net.URI
 
 //@MicronautTest
