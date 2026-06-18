@@ -42,7 +42,7 @@ class MediaSyncRiver(
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
-        val eventId = packet["eventId"].asText()
+        val eventId = packet["eventId"].asString()
         val dtoVersion = packet["dtoVersion"].asLong()
         if (dtoVersion > rapidDTOVersion) LOG.warn("dto version: $dtoVersion is newer than our version: $rapidDTOVersion")
         val dto = objectMapper.treeToValue(packet["payload"], SeriesRapidDTO::class.java)
