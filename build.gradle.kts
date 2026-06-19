@@ -5,12 +5,12 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 val jvmTarget = "25"
 val micronautVersion = "5.0.2"
 val junitJupiterVersion = "5.9.2"
-val logbackEncoderVersion = "7.3"
+val logbackEncoderVersion = "9.0"
 val postgresqlVersion = "42.7.2"
 val tcVersion = "2.0.1"
 val mockkVersion = "1.13.4"
 val kotestVersion = "5.5.5"
-val rapidsRiversVersion = "202606181434"
+val rapidsRiversVersion = "202606190809"
 val grunndataDtoVersion = "202606180923"
 
 
@@ -34,7 +34,7 @@ configurations.all {
 
 dependencies {
 
-    api("net.logstash.logback:logstash-logback-encoder:$logbackEncoderVersion")
+    runtimeOnly("net.logstash.logback:logstash-logback-encoder:$logbackEncoderVersion")
 
     runtimeOnly("org.yaml:snakeyaml")
     implementation("io.micronaut:micronaut-jackson-databind")

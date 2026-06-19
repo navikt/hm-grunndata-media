@@ -1,9 +1,9 @@
 package no.nav.hm.grunndata.media.storage
 
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.runBlocking
 import no.nav.hm.grunndata.media.sync.getContentType
+import tools.jackson.databind.ObjectMapper
 import java.net.URI
 
 //@MicronautTest
