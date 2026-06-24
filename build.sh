@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-./gradlew clean build --no-daemon
+./gradlew clean build

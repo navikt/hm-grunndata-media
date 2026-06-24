@@ -1,11 +1,11 @@
 package no.nav.hm.grunndata.media.model
 
-import io.kotest.common.runBlocking
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.micronaut.test.annotation.MockBean
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import io.mockk.mockk
+import kotlinx.coroutines.runBlocking
 import no.nav.hm.grunndata.media.storage.StorageService
 import no.nav.hm.grunndata.media.sync.MediaUriHandler
 import no.nav.hm.grunndata.rapid.dto.MediaInfo

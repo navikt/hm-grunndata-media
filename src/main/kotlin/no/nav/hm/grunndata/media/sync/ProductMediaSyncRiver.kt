@@ -1,6 +1,5 @@
 package no.nav.hm.grunndata.media.sync
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.micronaut.context.annotation.Context
 import io.micronaut.context.annotation.Requires
 import kotlinx.coroutines.runBlocking
@@ -14,6 +13,7 @@ import no.nav.hm.grunndata.rapid.event.EventName
 import no.nav.hm.grunndata.rapid.event.RapidApp
 import no.nav.hm.rapids_rivers.micronaut.RiverHead
 import org.slf4j.LoggerFactory
+import tools.jackson.databind.ObjectMapper
 
 @Context
 @Requires(bean = KafkaRapid::class)
@@ -42,7 +42,7 @@ class MediaSyncRiver(
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
-        val eventId = packet["eventId"].asText()
+        val eventId = packet["eventId"].asString()
         val dtoVersion = packet["dtoVersion"].asLong()
         if (dtoVersion > rapidDTOVersion) LOG.warn("dto version: $dtoVersion is newer than our version: $rapidDTOVersion")
         val dto = objectMapper.treeToValue(packet["payload"], SeriesRapidDTO::class.java)

@@ -1,9 +1,9 @@
 package no.nav.hm.grunndata.media.model
 
-import io.kotest.common.runBlocking
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import java.util.*
 
