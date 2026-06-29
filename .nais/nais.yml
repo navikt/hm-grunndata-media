@@ -83,3 +83,4 @@ spec:
         - application: hm-grunndata-register
         - application: hm-grunndata-import
         - application: hm-grunndata-media-proxy
+        - application: hm-finnhjelpemiddel-news
