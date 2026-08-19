@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 val jvmTarget = "25"
-val micronautVersion = "5.0.2"
+val micronautVersion = "5.1.1"
 val junitJupiterVersion = "5.9.2"
 val logbackEncoderVersion = "9.0"
 val postgresqlVersion = "42.7.2"
@@ -22,7 +22,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.allopen") version "2.3.21"
     id("java")
     id("com.gradleup.shadow") version "9.3.1"
-    id("io.micronaut.application") version "5.0.0"
+    id("io.micronaut.application") version "5.0.2"
     id("com.google.devtools.ksp") version "2.3.7"
 }
 
